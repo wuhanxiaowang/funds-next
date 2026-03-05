@@ -1,0 +1,10 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/alerts/page": "/alerts",
+  "/asset-classes/page": "/asset-classes",
+  "/page": "/",
+  "/rules/page": "/rules",
+  "/analyze/page": "/analyze",
+  "/monitor/page": "/monitor",
+  "/signals/page": "/signals"
+}

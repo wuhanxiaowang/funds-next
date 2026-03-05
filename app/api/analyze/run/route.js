@@ -1,0 +1,19 @@
+import { NextResponse } from 'next/server'
+import { runAnalysis } from '../../../../lib/pipeline'
+
+export const dynamic = 'force-dynamic'
+
+export async function POST(req) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const pageSize = Math.min(parseInt(searchParams.get('page_size') || '1', 10), 30)
+    
+    // 异步启动分析，不等待完成
+    runAnalysis(pageSize).catch(e => console.error('分析任务失败:', e))
+    
+    // 立即返回，让前端开始轮询状态
+    return NextResponse.json({ ok: true, message: '分析任务已启动' })
+  } catch (e) {
+    return NextResponse.json({ message: '分析失败: ' + (e.message || '') }, { status: 500 })
+  }
+}
