@@ -2,35 +2,6 @@
   "version": 3,
   "middleware": {},
   "functions": {
-    "/api/analyze/stats/route": {
-      "files": [
-        "server/server-reference-manifest.js",
-        "server/app/api/analyze/stats/route_client-reference-manifest.js",
-        "server/middleware-build-manifest.js",
-        "server/middleware-react-loadable-manifest.js",
-        "server/next-font-manifest.js",
-        "server/interception-route-rewrite-manifest.js",
-        "server/edge-runtime-webpack.js",
-        "server/app/api/analyze/stats/route.js"
-      ],
-      "name": "app/api/analyze/stats/route",
-      "page": "/api/analyze/stats/route",
-      "matchers": [
-        {
-          "regexp": "^/api/analyze/stats$",
-          "originalSource": "/api/analyze/stats"
-        }
-      ],
-      "wasm": [],
-      "assets": [],
-      "env": {
-        "__NEXT_BUILD_ID": "development",
-        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "pSbBGreVraZWdUCh1xfBnQ/Ip44bLpYYkehpd1Er9/E=",
-        "__NEXT_PREVIEW_MODE_ID": "c197cf07c5e4acc573c86f00f617d9e5",
-        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "c189a21bbead2edaf2ace0198e53e190eedefe53cd11c1292ab190de88226730",
-        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
-      }
-    },
     "/api/analyze/status/route": {
       "files": [
         "server/server-reference-manifest.js",
@@ -60,23 +31,23 @@
         "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
       }
     },
-    "/api/news/schedule/status/route": {
+    "/api/analyze/stats/route": {
       "files": [
         "server/server-reference-manifest.js",
-        "server/app/api/news/schedule/status/route_client-reference-manifest.js",
+        "server/app/api/analyze/stats/route_client-reference-manifest.js",
         "server/middleware-build-manifest.js",
         "server/middleware-react-loadable-manifest.js",
         "server/next-font-manifest.js",
         "server/interception-route-rewrite-manifest.js",
         "server/edge-runtime-webpack.js",
-        "server/app/api/news/schedule/status/route.js"
+        "server/app/api/analyze/stats/route.js"
       ],
-      "name": "app/api/news/schedule/status/route",
-      "page": "/api/news/schedule/status/route",
+      "name": "app/api/analyze/stats/route",
+      "page": "/api/analyze/stats/route",
       "matchers": [
         {
-          "regexp": "^/api/news/schedule/status$",
-          "originalSource": "/api/news/schedule/status"
+          "regexp": "^/api/analyze/stats$",
+          "originalSource": "/api/analyze/stats"
         }
       ],
       "wasm": [],
@@ -118,6 +89,93 @@
         "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
       }
     },
+    "/api/signals/route": {
+      "files": [
+        "server/server-reference-manifest.js",
+        "server/app/api/signals/route_client-reference-manifest.js",
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/signals/route.js"
+      ],
+      "name": "app/api/signals/route",
+      "page": "/api/signals/route",
+      "matchers": [
+        {
+          "regexp": "^/api/signals$",
+          "originalSource": "/api/signals"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "development",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "pSbBGreVraZWdUCh1xfBnQ/Ip44bLpYYkehpd1Er9/E=",
+        "__NEXT_PREVIEW_MODE_ID": "c197cf07c5e4acc573c86f00f617d9e5",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "c189a21bbead2edaf2ace0198e53e190eedefe53cd11c1292ab190de88226730",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
+      }
+    },
+    "/api/news/schedule/start/route": {
+      "files": [
+        "server/server-reference-manifest.js",
+        "server/app/api/news/schedule/start/route_client-reference-manifest.js",
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/news/schedule/start/route.js"
+      ],
+      "name": "app/api/news/schedule/start/route",
+      "page": "/api/news/schedule/start/route",
+      "matchers": [
+        {
+          "regexp": "^/api/news/schedule/start$",
+          "originalSource": "/api/news/schedule/start"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "development",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "pSbBGreVraZWdUCh1xfBnQ/Ip44bLpYYkehpd1Er9/E=",
+        "__NEXT_PREVIEW_MODE_ID": "c197cf07c5e4acc573c86f00f617d9e5",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "c189a21bbead2edaf2ace0198e53e190eedefe53cd11c1292ab190de88226730",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
+      }
+    },
+    "/api/news/schedule/stop/route": {
+      "files": [
+        "server/server-reference-manifest.js",
+        "server/app/api/news/schedule/stop/route_client-reference-manifest.js",
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/news/schedule/stop/route.js"
+      ],
+      "name": "app/api/news/schedule/stop/route",
+      "page": "/api/news/schedule/stop/route",
+      "matchers": [
+        {
+          "regexp": "^/api/news/schedule/stop$",
+          "originalSource": "/api/news/schedule/stop"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "development",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "pSbBGreVraZWdUCh1xfBnQ/Ip44bLpYYkehpd1Er9/E=",
+        "__NEXT_PREVIEW_MODE_ID": "c197cf07c5e4acc573c86f00f617d9e5",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "c189a21bbead2edaf2ace0198e53e190eedefe53cd11c1292ab190de88226730",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
+      }
+    },
     "/api/analyze/schedule/status/route": {
       "files": [
         "server/server-reference-manifest.js",
@@ -147,23 +205,23 @@
         "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
       }
     },
-    "/api/rules/route": {
+    "/api/news/schedule/status/route": {
       "files": [
         "server/server-reference-manifest.js",
-        "server/app/api/rules/route_client-reference-manifest.js",
+        "server/app/api/news/schedule/status/route_client-reference-manifest.js",
         "server/middleware-build-manifest.js",
         "server/middleware-react-loadable-manifest.js",
         "server/next-font-manifest.js",
         "server/interception-route-rewrite-manifest.js",
         "server/edge-runtime-webpack.js",
-        "server/app/api/rules/route.js"
+        "server/app/api/news/schedule/status/route.js"
       ],
-      "name": "app/api/rules/route",
-      "page": "/api/rules/route",
+      "name": "app/api/news/schedule/status/route",
+      "page": "/api/news/schedule/status/route",
       "matchers": [
         {
-          "regexp": "^/api/rules$",
-          "originalSource": "/api/rules"
+          "regexp": "^/api/news/schedule/status$",
+          "originalSource": "/api/news/schedule/status"
         }
       ],
       "wasm": [],
@@ -193,6 +251,35 @@
         {
           "regexp": "^/api/asset\\-classes$",
           "originalSource": "/api/asset-classes"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "development",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "pSbBGreVraZWdUCh1xfBnQ/Ip44bLpYYkehpd1Er9/E=",
+        "__NEXT_PREVIEW_MODE_ID": "c197cf07c5e4acc573c86f00f617d9e5",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "c189a21bbead2edaf2ace0198e53e190eedefe53cd11c1292ab190de88226730",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
+      }
+    },
+    "/api/rules/route": {
+      "files": [
+        "server/server-reference-manifest.js",
+        "server/app/api/rules/route_client-reference-manifest.js",
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/rules/route.js"
+      ],
+      "name": "app/api/rules/route",
+      "page": "/api/rules/route",
+      "matchers": [
+        {
+          "regexp": "^/api/rules$",
+          "originalSource": "/api/rules"
         }
       ],
       "wasm": [],
@@ -251,35 +338,6 @@
         {
           "regexp": "^/api/audit$",
           "originalSource": "/api/audit"
-        }
-      ],
-      "wasm": [],
-      "assets": [],
-      "env": {
-        "__NEXT_BUILD_ID": "development",
-        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "pSbBGreVraZWdUCh1xfBnQ/Ip44bLpYYkehpd1Er9/E=",
-        "__NEXT_PREVIEW_MODE_ID": "c197cf07c5e4acc573c86f00f617d9e5",
-        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "c189a21bbead2edaf2ace0198e53e190eedefe53cd11c1292ab190de88226730",
-        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
-      }
-    },
-    "/api/signals/route": {
-      "files": [
-        "server/server-reference-manifest.js",
-        "server/app/api/signals/route_client-reference-manifest.js",
-        "server/middleware-build-manifest.js",
-        "server/middleware-react-loadable-manifest.js",
-        "server/next-font-manifest.js",
-        "server/interception-route-rewrite-manifest.js",
-        "server/edge-runtime-webpack.js",
-        "server/app/api/signals/route.js"
-      ],
-      "name": "app/api/signals/route",
-      "page": "/api/signals/route",
-      "matchers": [
-        {
-          "regexp": "^/api/signals$",
-          "originalSource": "/api/signals"
         }
       ],
       "wasm": [],
