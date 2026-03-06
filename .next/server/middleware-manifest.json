@@ -26,38 +26,9 @@
       "env": {
         "__NEXT_BUILD_ID": "development",
         "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "pSbBGreVraZWdUCh1xfBnQ/Ip44bLpYYkehpd1Er9/E=",
-        "__NEXT_PREVIEW_MODE_ID": "c197cf07c5e4acc573c86f00f617d9e5",
-        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "c189a21bbead2edaf2ace0198e53e190eedefe53cd11c1292ab190de88226730",
-        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
-      }
-    },
-    "/api/signals/route": {
-      "files": [
-        "server/server-reference-manifest.js",
-        "server/app/api/signals/route_client-reference-manifest.js",
-        "server/middleware-build-manifest.js",
-        "server/middleware-react-loadable-manifest.js",
-        "server/next-font-manifest.js",
-        "server/interception-route-rewrite-manifest.js",
-        "server/edge-runtime-webpack.js",
-        "server/app/api/signals/route.js"
-      ],
-      "name": "app/api/signals/route",
-      "page": "/api/signals/route",
-      "matchers": [
-        {
-          "regexp": "^/api/signals$",
-          "originalSource": "/api/signals"
-        }
-      ],
-      "wasm": [],
-      "assets": [],
-      "env": {
-        "__NEXT_BUILD_ID": "development",
-        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "pSbBGreVraZWdUCh1xfBnQ/Ip44bLpYYkehpd1Er9/E=",
-        "__NEXT_PREVIEW_MODE_ID": "c197cf07c5e4acc573c86f00f617d9e5",
-        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "c189a21bbead2edaf2ace0198e53e190eedefe53cd11c1292ab190de88226730",
-        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "dbe37b9147e9b14b596c57601f4d7693d6fa1536ad64750bc15a2b07b696e5ba"
+        "__NEXT_PREVIEW_MODE_ID": "232015524af97836bcb4b339f7911809",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "f6c00bf614772c82bd36629160d1ef16e3e7f145b5049ef6fdea7cb45ae27d7c",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "d95c894ba881c075b15b3ecdc136156d585eb96fe0dc0757e6d10d61344e6f68"
       }
     }
   },

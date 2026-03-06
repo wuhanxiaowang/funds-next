@@ -1,10 +1,3 @@
 {
-  "/api/analyze/status/route": "app/api/analyze/status/route.js",
-  "/api/signals/route": "app/api/signals/route.js",
-  "/api/analyze/run/route": "app/api/analyze/run/route.js",
-  "/monitor/page": "app/monitor/page.js",
-  "/analyze/page": "app/analyze/page.js",
-  "/signals/page": "app/signals/page.js",
-  "/rules/page": "app/rules/page.js",
-  "/audit/page": "app/audit/page.js"
+  "/api/analyze/status/route": "app/api/analyze/status/route.js"
 }
