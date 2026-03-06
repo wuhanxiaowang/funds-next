@@ -82,6 +82,52 @@ export default function AuditPage() {
     return type === 'user_action' ? 'var(--primary)' : 'var(--success)'
   }
 
+  // 从User-Agent解析操作系统
+  const getOSFromUserAgent = (userAgent) => {
+    if (!userAgent) return '-'
+    const ua = userAgent.toLowerCase()
+    if (ua.includes('windows nt 10.0')) return 'Windows 10/11'
+    if (ua.includes('windows nt 6.3')) return 'Windows 8.1'
+    if (ua.includes('windows nt 6.2')) return 'Windows 8'
+    if (ua.includes('windows nt 6.1')) return 'Windows 7'
+    if (ua.includes('windows nt 6.0')) return 'Windows Vista'
+    if (ua.includes('windows nt 5.1')) return 'Windows XP'
+    if (ua.includes('macintosh') || ua.includes('mac os')) return 'macOS'
+    if (ua.includes('linux')) return 'Linux'
+    if (ua.includes('android')) return 'Android'
+    if (ua.includes('iphone') || ua.includes('ipad') || ua.includes('ios')) return 'iOS'
+    return 'Unknown'
+  }
+
+  // 格式化IP地址显示
+  const formatIP = (ip) => {
+    if (!ip || ip === 'unknown') return '-'
+    // IPv6本地地址转换为IPv4显示
+    if (ip === '::1') return '127.0.0.1'
+    // 处理IPv6映射的IPv4地址
+    if (ip.startsWith('::ffff:')) return ip.replace('::ffff:', '')
+    return ip
+  }
+
+  // select样式
+  const selectStyle = {
+    width: '100%',
+    padding: '8px 12px',
+    borderRadius: '6px',
+    border: '1px solid rgba(0, 149, 255, 0.2)',
+    background: 'rgba(30, 40, 60, 0.8)',
+    color: 'var(--text)',
+    fontSize: '14px',
+    cursor: 'pointer'
+  }
+
+  // option样式
+  const optionStyle = {
+    background: 'rgba(30, 40, 60, 0.95)',
+    color: 'var(--text)',
+    padding: '8px 12px'
+  }
+
   return (
     <div>
       <div className="glass" style={{ padding: '20px', marginBottom: '20px' }}>
@@ -196,7 +242,7 @@ export default function AuditPage() {
           <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
             <div style={{ 
               display: 'grid', 
-              gridTemplateColumns: '1fr 1fr 2fr 1fr', 
+              gridTemplateColumns: '1.2fr 0.8fr 1.5fr 1fr 1.2fr 0.8fr', 
               gap: '16px', 
               padding: '12px', 
               borderBottom: '1px solid rgba(0, 149, 255, 0.2)',
@@ -206,12 +252,14 @@ export default function AuditPage() {
               <div>时间</div>
               <div>类型</div>
               <div>操作</div>
+              <div>用户IP</div>
+              <div>操作系统</div>
               <div>详情</div>
             </div>
             {logs.map((log, index) => (
               <div key={log.id || index} style={{ 
                 display: 'grid', 
-                gridTemplateColumns: '1fr 1fr 2fr 1fr', 
+                gridTemplateColumns: '1.2fr 0.8fr 1.5fr 1fr 1.2fr 0.8fr', 
                 gap: '16px', 
                 padding: '12px', 
                 borderBottom: '1px solid rgba(0, 149, 255, 0.1)', 
@@ -225,6 +273,12 @@ export default function AuditPage() {
                 </div>
                 <div style={{ fontSize: '14px' }}>
                   {getOperationLabel(log.operation)}
+                </div>
+                <div style={{ fontSize: '14px', fontFamily: 'monospace', color: 'var(--text-muted)' }}>
+                  {formatIP(log.ip_address)}
+                </div>
+                <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+                  {getOSFromUserAgent(log.user_agent)}
                 </div>
                 <div style={{ fontSize: '14px' }}>
                   <button 

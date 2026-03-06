@@ -1,14 +1,10 @@
 {
+  "/api/analyze/status/route": "app/api/analyze/status/route.js",
   "/api/audit/route": "app/api/audit/route.js",
   "/api/analyze/stats/route": "app/api/analyze/stats/route.js",
   "/api/analyze/schedule/status/route": "app/api/analyze/schedule/status/route.js",
   "/api/news/schedule/status/route": "app/api/news/schedule/status/route.js",
-  "/api/analyze/status/route": "app/api/analyze/status/route.js",
-  "/api/news/route": "static/webpack/app/api/news/route.099b7653a978c39d.hot-update.js",
-  "/audit/page": "app/audit/page.js",
+  "/api/news/route": "app/api/news/route.js",
   "/monitor/page": "app/monitor/page.js",
-  "/signals/page": "app/signals/page.js",
-  "/analyze/page": "app/analyze/page.js",
-  "/asset-classes/page": "app/asset-classes/page.js",
-  "/rules/page": "app/rules/page.js"
+  "/audit/page": "app/audit/page.js"
 }

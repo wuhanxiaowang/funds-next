@@ -1,0 +1,68 @@
+# 腾讯云 CloudBase（云开发）Web 函数部署说明
+
+## 一、核心优势
+
+- **零配置**：自动识别 Next.js，无需改 `next.config.js`
+- **控制台操作**：无需写脚本/打包，可直接上传项目目录
+- **国内节点**：访问快，免费额度适合个人项目
+- **Next.js + API 路由**：页面与 `/api/*` 均可正常运行
+
+---
+
+## 二、部署步骤（约 5 分钟）
+
+### 1. 开通服务
+
+1. 登录 [腾讯云](https://cloud.tencent.com/) → **云开发 CloudBase**
+2. **新建环境**，计费方式选 **「按量付费」**（免费额度自动生效）
+
+### 2. 创建 Web 函数
+
+1. 进入环境 → **云函数** → **新建**
+2. 选择 **「Web 函数」**
+3. **代码上传**：选择 **「本地上传文件夹」**，选中本项目**根目录**（含 `package.json`、`app`、`next.config.js` 等）
+4. **运行时**：选择 **Node.js 18** 或 **Node.js 20**
+5. **启动命令**：一般无需填写，CloudBase 会自动识别 `package.json` 里的 `start`（`next start`）。若需指定端口，可在控制台「环境变量」中增加 `PORT=9000`，并在 **启动命令** 填：`npm run start:cloudbase`
+
+### 3. 安装依赖并构建（重要）
+
+Web 函数需要**先在本机构建**再上传，否则运行会报错：
+
+在项目根目录执行：
+
+```bash
+npm install --registry https://registry.npmmirror.com
+npm run build
+```
+
+上传时选择**已执行过上述命令后的项目根目录**（包含 `node_modules` 和 `.next`）。
+
+### 4. 环境变量
+
+在 CloudBase 控制台 → 该 Web 函数 → **配置** → **环境变量** 中添加与本地一致变量，例如：
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `RESEND_API_KEY`、`RESEND_FROM`、`EMAIL_TO`
+- `OPENAI_API_KEY` 或 `DEEPSEEK_API_KEY` 等
+
+### 5. 部署与访问
+
+1. 点击 **部署**，等待完成
+2. 部署成功后生成**免费访问域名**（如 `xxx.service.tcloudbase.com`）
+3. 浏览器访问该域名，即可使用 Next.js 页面和 API
+
+---
+
+## 三、若控制台要求固定端口
+
+部分环境下 Web 函数要求进程监听 **9000**。已在 `package.json` 中增加脚本：
+
+- **启动命令** 填：`npm run start:cloudbase`  
+  会执行 `next start -p 9000 -H 0.0.0.0`，满足 CloudBase 要求。
+
+---
+
+## 四、后续更新
+
+代码或依赖更新后，在本地重新执行 `npm install` 和 `npm run build`，再在控制台用「本地上传文件夹」重新上传并部署即可。
