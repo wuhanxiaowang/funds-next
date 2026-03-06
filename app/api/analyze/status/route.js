@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+export const runtime = 'edge'
+
 // 全局变量存储分析状态
 let analysisStatus = {
   isRunning: false,

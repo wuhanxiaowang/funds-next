@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { runAnalysis } from '../../../../lib/pipeline'
 
+export const runtime = 'edge'
+
 export async function POST(req) {
   try {
     const { searchParams } = new URL(req.url)

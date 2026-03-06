@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '../../../lib/supabase'
 
+export const runtime = 'edge'
+
 export async function GET(req) {
   if (!supabase) return NextResponse.json([], { status: 200 })
   const { searchParams } = new URL(req.url)

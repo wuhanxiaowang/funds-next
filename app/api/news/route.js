@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { supabase } from '../../../lib/supabase'
 import Parser from 'rss-parser'
 
+export const runtime = 'edge'
+
 const parser = new Parser()
 const DOMESTIC_RSS = [
   'https://feed.cnblogs.com/blog/sitehome/rss'         // 和讯财经

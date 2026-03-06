@@ -56,6 +56,15 @@ export default function MonitorPage() {
     }
   }
 
+  const refreshAnalysisStatus = async () => {
+    try {
+      const data = await apiGet('api/analyze/status')
+      setAnalyzing(data.isRunning === true)
+    } catch (_) {
+      setAnalyzing(false)
+    }
+  }
+
   const refreshNews = async () => {
     try {
       const data = await apiGet('api/news', { limit: 15 })
@@ -121,9 +130,16 @@ export default function MonitorPage() {
     refreshSchedule()
     refreshNewsSchedule()
     refreshNews()
+    refreshAnalysisStatus()
+    
+    // 每3秒刷新一次分析状态
+    const interval = setInterval(refreshAnalysisStatus, 3000)
+    return () => clearInterval(interval)
   }, [])
 
   const runAnalysis = async () => {
+    // 先检查分析状态，如果正在分析中，直接跳转到分析页面
+    await refreshAnalysisStatus()
     // 跳转到分析页面并自动启动分析
     router.push('/analyze?autoStart=true')
   }
