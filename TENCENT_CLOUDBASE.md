@@ -96,7 +96,7 @@ npm run build
 
 配置正确后，再访问审计、监控、分析等页面，接口即可正常返回。
 
-**多实例部署（EKS/多 Pod）**：分析状态已改为存 **Supabase 表 `analysis_status`**，所有实例共享同一状态，点击「开始分析」后页面进度会正常更新。需在 Supabase 执行 `supabase-schema.sql` 中 **analysis_status** 相关建表语句（若尚未执行）。
+**多实例部署（EKS/多 Pod）**：分析状态已改为存 **Supabase 表 `analysis_status`**，所有实例共享同一状态，点击「开始分析」后页面进度会正常更新。需在 Supabase 执行 `database-schema.sql` 中 **analysis_status** 相关建表语句（若尚未执行）。
 
 ---
 

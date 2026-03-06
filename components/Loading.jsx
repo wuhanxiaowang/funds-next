@@ -108,16 +108,18 @@ export function FullScreenLoading({ text = '加载中...' }) {
 }
 
 // 内联样式添加动画
-const style = document.createElement('style')
-style.textContent = `
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-`
-document.head.appendChild(style)
+if (typeof window !== 'undefined' && document) {
+  const style = document.createElement('style')
+  style.textContent = `
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+  `
+  document.head.appendChild(style)
+}
