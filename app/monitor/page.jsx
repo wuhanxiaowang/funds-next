@@ -431,84 +431,115 @@ export default function MonitorPage() {
         <div className="glass" style={{ padding: '20px', marginBottom: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h3 style={{ fontSize: '16px', margin: 0 }}>最近有效信号</h3>
-            <button 
-              className="btn btn-ghost" 
-              onClick={() => router.push('/signals?filter=valid')}
-              style={{ padding: '6px 12px', fontSize: '13px' }}
-            >
-              查看全部
-            </button>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button 
+                className="btn btn-ghost" 
+                onClick={() => setSignalsExpanded(!signalsExpanded)}
+                style={{ padding: '4px 10px', fontSize: '12px' }}
+              >
+                {signalsExpanded ? '收起' : '展开'}
+              </button>
+              <button 
+                className="btn btn-ghost" 
+                onClick={() => router.push('/signals?filter=valid')}
+                style={{ padding: '4px 10px', fontSize: '12px' }}
+              >
+                查看全部
+              </button>
+            </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {validSignals.map((signal) => {
-              const dirStyle = { bg: 'transparent', color: 'var(--text)', border: '1px solid rgba(255, 255, 255, 0.1)' }
-              
-              return (
-                <div 
-                  key={signal.id}
-                  onClick={() => setSelectedSignal(signal)}
-                  style={{
-                    padding: '14px 16px',
+          {signalsExpanded && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {validSignals.map((signal) => {
+                // 根据信号方向设置不同颜色
+                let dirStyle;
+                if (signal.direction === '涨' || signal.direction === '看多') {
+                  dirStyle = {
+                    background: 'rgba(0, 255, 136, 0.15)',
+                    color: '#00ff88',
+                    border: '1px solid rgba(0, 255, 136, 0.3)'
+                  };
+                } else if (signal.direction === '跌' || signal.direction === '看空') {
+                  dirStyle = {
+                    background: 'rgba(255, 77, 79, 0.15)',
+                    color: '#ff4d4f',
+                    border: '1px solid rgba(255, 77, 79, 0.3)'
+                  };
+                } else {
+                  dirStyle = {
                     background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    ':hover': {
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(0, 149, 255, 0.3)'
-                    }
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '4px', color: '#fff' }}>
-                        {signal.event || '未知事件'}
+                    color: 'var(--text)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  };
+                }
+                
+                return (
+                  <div 
+                    key={signal.id}
+                    onClick={() => setSelectedSignal(signal)}
+                    style={{
+                      padding: '14px 16px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      ':hover': {
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        border: '1px solid rgba(0, 149, 255, 0.3)'
+                      }
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '4px', color: '#fff' }}>
+                          {signal.event || '未知事件'}
+                        </div>
+                        <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                          {signal.asset_class || '-'} · {signal.period || '-'}
+                        </div>
                       </div>
-                      <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                        {signal.asset_class || '-'} · {signal.period || '-'}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '12px' }}>
+                        <span style={{
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          ...dirStyle
+                        }}>
+                          {signal.direction}
+                        </span>
+                        <span style={{
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          background: 'rgba(255, 169, 64, 0.15)',
+                          color: '#ffa940',
+                          border: '1px solid rgba(255, 169, 64, 0.3)'
+                        }}>
+                          强度 {signal.strength}
+                        </span>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '12px' }}>
-                      <span style={{
-                        padding: '4px 10px',
+                    {signal.news && (
+                      <div style={{
+                        fontSize: '12px',
+                        color: 'var(--text-muted)',
+                        marginTop: '8px',
+                        padding: '8px 10px',
+                        background: 'rgba(0, 0, 0, 0.2)',
                         borderRadius: '6px',
-                        fontSize: '13px',
-                        fontWeight: 600,
-                        ...dirStyle
+                        borderLeft: '3px solid rgba(0, 149, 255, 0.5)'
                       }}>
-                        {signal.direction}
-                      </span>
-                      <span style={{
-                        padding: '4px 10px',
-                        borderRadius: '6px',
-                        fontSize: '13px',
-                        fontWeight: 600,
-                        background: 'rgba(255, 169, 64, 0.15)',
-                        color: '#ffa940',
-                        border: '1px solid rgba(255, 169, 64, 0.3)'
-                      }}>
-                        强度 {signal.strength}
-                      </span>
-                    </div>
+                        📰 {signal.news.title || '无标题'}
+                      </div>
+                    )}
                   </div>
-                  {signal.news && (
-                    <div style={{
-                      fontSize: '12px',
-                      color: 'var(--text-muted)',
-                      marginTop: '8px',
-                      padding: '8px 10px',
-                      background: 'rgba(0, 0, 0, 0.2)',
-                      borderRadius: '6px',
-                      borderLeft: '3px solid rgba(0, 149, 255, 0.5)'
-                    }}>
-                      📰 {signal.news.title || '无标题'}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       )}
 
