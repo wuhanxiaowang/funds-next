@@ -96,6 +96,21 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/analyze/run/route.js"
     ],
+    "/api/news/schedule/start/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/news/schedule/start/route.js"
+    ],
+    "/api/news/schedule/stop/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/news/schedule/stop/route.js"
+    ],
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
+    ],
     "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",

@@ -306,6 +306,7 @@ export default function MonitorPage() {
 
   return (
     <div>
+      {/* 快捷操作区 */}
       <div className="glass" style={{ padding: '20px', marginBottom: '20px' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
@@ -318,35 +319,20 @@ export default function MonitorPage() {
                 定时拉取新闻中
               </span>
             )}
-            {newsScheduleEnabled && nextTimes.nextNewsTime && (
-              <span className="tag tag-warning" style={{ padding: '4px 10px', borderRadius: '6px', backgroundColor: 'rgba(255, 165, 0, 0.2)', color: '#ff9800', borderColor: 'rgba(255, 165, 0, 0.3)' }}>
-                下次拉取: {String(nextTimes.nextNewsTime.getHours()).padStart(2, '0')}:{String(nextTimes.nextNewsTime.getMinutes()).padStart(2, '0')}:{String(nextTimes.nextNewsTime.getSeconds()).padStart(2, '0')}
-              </span>
-            )}
-            {scheduleEnabled && nextTimes.nextAnalysisTime && (
-              <span className="tag tag-warning" style={{ padding: '4px 10px', borderRadius: '6px', backgroundColor: 'rgba(255, 165, 0, 0.2)', color: '#ff9800', borderColor: 'rgba(255, 165, 0, 0.3)' }}>
-                下次分析: {String(nextTimes.nextAnalysisTime.getHours()).padStart(2, '0')}:{String(nextTimes.nextAnalysisTime.getMinutes()).padStart(2, '0')}:{String(nextTimes.nextAnalysisTime.getSeconds()).padStart(2, '0')}
-              </span>
-            )}
           </div>
-          <div className="actions-row">
+          <div className="actions-row" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button className="btn btn-primary" onClick={fetchLatestNews} disabled={fetchingNews}>
-              {fetchingNews ? '抓取中...' : '拉取新闻'}
+              {fetchingNews ? '抓取中...' : '立即拉取新闻'}
             </button>
             <button className="btn btn-primary" onClick={runAnalysis} disabled={analyzing}>
               {analyzing ? '分析中...' : '立即分析'}
             </button>
-            {!scheduleEnabled ? (
-              <button className="btn btn-success" onClick={startSchedule}>启动定时分析</button>
-            ) : (
-              <button className="btn btn-warning" onClick={stopSchedule}>停止定时分析</button>
-            )}
-            {!newsScheduleEnabled ? (
-              <button className="btn btn-success" onClick={startNewsSchedule}>启动定时拉取</button>
-            ) : (
-              <button className="btn btn-warning" onClick={stopNewsSchedule}>停止定时拉取</button>
-            )}
-            <button className="btn btn-ghost" onClick={() => { refreshStats(); refreshSchedule(); refreshNewsSchedule(); refreshNews(); }}>刷新数据</button>
+            <button className="btn btn-ghost" onClick={() => router.push('/signals?filter=valid')}>
+              查看信号详情
+            </button>
+            <button className="btn btn-ghost" onClick={() => { refreshStats(); refreshSchedule(); refreshNewsSchedule(); refreshNews(); }}>
+              刷新数据
+            </button>
           </div>
         </div>
       </div>
@@ -379,48 +365,47 @@ export default function MonitorPage() {
         </div>
       )}
 
-      <div className="stats-grid">
-        {loading ? (
-          // 显示骨架屏
-          <>
-            <CardSkeleton />
-            <CardSkeleton />
-            <CardSkeleton />
-            <CardSkeleton />
-          </>
-        ) : (
-          // 显示实际数据
-          <>
-            <div className="stat-card">
-              <div className="stat-icon green">📰</div>
-              <div>
-                <div className="stat-title">今日新闻</div>
-                <div className="stat-value">{stats.newsCount}</div>
-              </div>
+
+
+
+
+      {/* 结果区 - 核心指标 */}
+      <div className="glass" style={{ padding: '20px', marginBottom: '20px' }}>
+        <h3 style={{ marginBottom: '16px', fontSize: '16px' }}>信号统计</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+          {/* 今日新闻 - 绿 */}
+          <div className="stat-card">
+            <div className="stat-icon green" style={{ fontSize: '24px' }}>📰</div>
+            <div>
+              <div className="stat-title" style={{ fontSize: '14px', color: 'var(--text-muted)' }}>今日新闻</div>
+              <div className="stat-value" style={{ fontSize: '32px', fontWeight: 700, color: '#fff' }}>{stats.newsCount}</div>
             </div>
-            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/signals')}>
-              <div className="stat-icon blue">📊</div>
-              <div>
-                <div className="stat-title">今日信号</div>
-                <div className="stat-value">{stats.signalCount}</div>
-              </div>
+          </div>
+          {/* 今日信号 - 蓝 */}
+          <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/signals')}>
+            <div className="stat-icon blue" style={{ fontSize: '24px' }}>📊</div>
+            <div>
+              <div className="stat-title" style={{ fontSize: '14px', color: 'var(--text-muted)' }}>今日信号</div>
+              <div className="stat-value" style={{ fontSize: '32px', fontWeight: 700, color: '#fff' }}>{stats.signalCount}</div>
             </div>
-            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/signals?filter=valid')}>
-              <div className="stat-icon orange">✓</div>
-              <div>
-                <div className="stat-title">有效信号</div>
-                <div className="stat-value">{stats.validSignalCount}</div>
-              </div>
+          </div>
+          {/* 有效信号 - 黄 */}
+          <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/signals?filter=valid')}>
+            <div className="stat-icon orange" style={{ fontSize: '24px' }}>✓</div>
+            <div>
+              <div className="stat-title" style={{ fontSize: '14px', color: 'var(--text-muted)' }}>有效信号</div>
+              <div className="stat-value" style={{ fontSize: '32px', fontWeight: 700, color: '#fff' }}>{stats.validSignalCount}</div>
             </div>
-            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/alerts')}>
-              <div className="stat-icon red">🔔</div>
-              <div>
-                <div className="stat-title">提醒次数</div>
-                <div className="stat-value">{stats.alertCount}</div>
-              </div>
+          </div>
+          {/* 提醒次数 - 红 */}
+          <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/alerts')}>
+            <div className="stat-icon red" style={{ fontSize: '24px' }}>🔔</div>
+            <div>
+              <div className="stat-title" style={{ fontSize: '14px', color: 'var(--text-muted)' }}>提醒次数</div>
+              <div className="stat-value" style={{ fontSize: '32px', fontWeight: 700, color: '#fff' }}>{stats.alertCount}</div>
             </div>
-          </>
-        )}
+          </div>
+        </div>
       </div>
 
       {/* 新闻模块 */}
@@ -558,8 +543,74 @@ export default function MonitorPage() {
         )}
       </div>
 
+      {/* 数据采集区 - 左侧 */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+        <div className="glass" style={{ padding: '20px' }}>
+          <h3 style={{ marginBottom: '16px', fontSize: '16px' }}>数据采集</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '4px' }}>定时拉取状态</div>
+                <div style={{ fontSize: '16px', fontWeight: 600 }}>
+                  {newsScheduleEnabled ? '已启动' : '已停止'}
+                </div>
+              </div>
+              {!newsScheduleEnabled ? (
+                <button className="btn btn-success" onClick={startNewsSchedule}>
+                  启动定时拉取
+                </button>
+              ) : (
+                <button className="btn btn-warning" onClick={stopNewsSchedule}>
+                  停止定时拉取
+                </button>
+              )}
+            </div>
+            {newsScheduleEnabled && nextTimes.nextNewsTime && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>下次拉取时间</span>
+                <span style={{ fontSize: '14px', fontWeight: 500 }}>
+                  {String(nextTimes.nextNewsTime.getHours()).padStart(2, '0')}:{String(nextTimes.nextNewsTime.getMinutes()).padStart(2, '0')}:{String(nextTimes.nextNewsTime.getSeconds()).padStart(2, '0')}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 分析区 - 右侧 */}
+        <div className="glass" style={{ padding: '20px' }}>
+          <h3 style={{ marginBottom: '16px', fontSize: '16px' }}>分析</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '4px' }}>定时分析状态</div>
+                <div style={{ fontSize: '16px', fontWeight: 600 }}>
+                  {scheduleEnabled ? '已启动' : '已停止'}
+                </div>
+              </div>
+              {!scheduleEnabled ? (
+                <button className="btn btn-success" onClick={startSchedule}>
+                  启动定时分析
+                </button>
+              ) : (
+                <button className="btn btn-warning" onClick={stopSchedule}>
+                  停止定时分析
+                </button>
+              )}
+            </div>
+            {scheduleEnabled && nextTimes.nextAnalysisTime && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>下次分析时间</span>
+                <span style={{ fontSize: '14px', fontWeight: 500 }}>
+                  {String(nextTimes.nextAnalysisTime.getHours()).padStart(2, '0')}:{String(nextTimes.nextAnalysisTime.getMinutes()).padStart(2, '0')}:{String(nextTimes.nextAnalysisTime.getSeconds()).padStart(2, '0')}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* 系统状态模块 */}
-      <div className="glass" style={{ padding: '20px', marginTop: '20px' }}>
+      <div className="glass" style={{ padding: '20px', marginBottom: '20px' }}>
         <h3 style={{ marginBottom: '16px', fontSize: '16px' }}>系统状态</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -573,6 +624,7 @@ export default function MonitorPage() {
 
         </div>
       </div>
+
     </div>
   )
 }

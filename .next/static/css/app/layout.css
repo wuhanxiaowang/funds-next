@@ -366,9 +366,7 @@ body::after {
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   box-shadow: 0 4px 16px var(--primary-glow);
@@ -400,7 +398,7 @@ body::after {
 .stat-icon {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -409,10 +407,10 @@ body::after {
   box-shadow: 0 4px 12px rgba(0, 149, 255, 0.4);
 }
 
-.stat-icon.green { background: linear-gradient(135deg, #00ff88, #00cc66); box-shadow: 0 4px 12px rgba(0, 255, 136, 0.4); }
-.stat-icon.blue  { background: linear-gradient(135deg, #0095ff, #00c3ff); box-shadow: 0 4px 12px rgba(0, 149, 255, 0.4); }
-.stat-icon.orange { background: linear-gradient(135deg, #ffaa00, #ffcc33); box-shadow: 0 4px 12px rgba(255, 170, 0, 0.4); }
-.stat-icon.red   { background: linear-gradient(135deg, #ff4444, #ff6666); box-shadow: 0 4px 12px rgba(255, 68, 68, 0.4); }
+.stat-icon.green { background: linear-gradient(135deg, #00ff88, #00cc66); box-shadow: 0 4px 12px rgba(0, 255, 136, 0.4); color: #fff; }
+.stat-icon.blue  { background: linear-gradient(135deg, #0095ff, #00c3ff); box-shadow: 0 4px 12px rgba(0, 149, 255, 0.4); color: #fff; }
+.stat-icon.orange { background: linear-gradient(135deg, #ffaa00, #ffcc33); box-shadow: 0 4px 12px rgba(255, 170, 0, 0.4); color: #fff; }
+.stat-icon.red   { background: linear-gradient(135deg, #ff4444, #ff6666); box-shadow: 0 4px 12px rgba(255, 68, 68, 0.4); color: #fff; }
 
 .stat-title {
   font-size: 13px;

@@ -4,18 +4,13 @@
   "/api/news/schedule/status/route": "app/api/news/schedule/status/route.js",
   "/api/news/route": "app/api/news/route.js",
   "/api/signals/route": "app/api/signals/route.js",
-  "/api/rules/route": "app/api/rules/route.js",
-  "/api/asset-classes/route": "app/api/asset-classes/route.js",
+  "/api/news/schedule/start/route": "app/api/news/schedule/start/route.js",
+  "/api/news/schedule/stop/route": "app/api/news/schedule/stop/route.js",
   "/api/alerts/route": "app/api/alerts/route.js",
-  "/api/audit/route": "app/api/audit/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
   "/api/analyze/status/route": "app/api/analyze/status/route.js",
-  "/api/analyze/run/route": "app/api/analyze/run/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/monitor/page": "app/monitor/page.js",
   "/analyze/page": "app/analyze/page.js",
-  "/signals/page": "app/signals/page.js",
-  "/rules/page": "app/rules/page.js",
-  "/asset-classes/page": "app/asset-classes/page.js",
   "/audit/page": "app/audit/page.js",
-  "/alerts/page": "app/alerts/page.js"
+  "/page": "app/page.js"
 }
