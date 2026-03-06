@@ -12,24 +12,26 @@ function SignalsContent() {
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
 
+  // 当 filter 参数变化时重新加载数据
+  useEffect(() => {
+    let ok = true
+    apiGet('api/signals', { skip: 0, limit: 500 })
+      .then((data) => { if (ok) setSignals(Array.isArray(data) ? data : []) })
+      .catch((e) => { if (ok) setError(e.message || '获取失败') })
+    return () => { ok = false }
+  }, [filter])
+
   // 页面可见性API，只在页面可见时加载数据
   useEffect(() => {
-    const loadData = () => {
-      let ok = true
-      apiGet('api/signals', { skip: 0, limit: 500 })
-        .then((data) => { if (ok) setSignals(Array.isArray(data) ? data : []) })
-        .catch((e) => { if (ok) setError(e.message || '获取失败') })
-      return () => { ok = false }
-    }
-    
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        loadData()
+        let ok = true
+        apiGet('api/signals', { skip: 0, limit: 500 })
+          .then((data) => { if (ok) setSignals(Array.isArray(data) ? data : []) })
+          .catch((e) => { if (ok) setError(e.message || '获取失败') })
+        return () => { ok = false }
       }
     }
-    
-    // 初始加载
-    loadData()
     
     // 监听页面可见性变化
     document.addEventListener('visibilitychange', handleVisibilityChange)
@@ -37,7 +39,7 @@ function SignalsContent() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [])
+  }, [filter])
 
   const filtered = signals.filter((s) => {
     // 按新闻ID过滤

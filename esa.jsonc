@@ -1,0 +1,9 @@
+{
+  "name": "funds-next",
+  "installCommand": "npm install --registry https://registry.npmmirror.com",
+  "buildCommand": "npm run build",
+  "assets": {
+    "directory": ".next",
+    "notFoundStrategy": "singlePageApplication"
+  }
+}
