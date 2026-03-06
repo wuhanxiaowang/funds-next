@@ -588,12 +588,16 @@ export default function MonitorPage() {
         ) : (
           <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
             {news.map((item, index) => (
-              <div key={item.id || index} style={{ 
-                padding: '12px', 
-                borderBottom: '1px solid rgba(0, 149, 255, 0.1)', 
-                transition: 'all 0.3s ease',
-                cursor: 'pointer'
-              }}>
+              <div 
+                key={item.id || index} 
+                style={{ 
+                  padding: '12px', 
+                  borderBottom: '1px solid rgba(0, 149, 255, 0.1)', 
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setNewsDetail(item)}
+              >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{item.title || '无标题'}</h4>
@@ -626,13 +630,15 @@ export default function MonitorPage() {
                   {item.content || '无内容'}
                 </p>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  <button className="btn btn-ghost" style={{ padding: '4px 12px', fontSize: '12px' }} onClick={() => {
+                  <button className="btn btn-ghost" style={{ padding: '4px 12px', fontSize: '12px' }} onClick={(e) => {
+                    e.stopPropagation();
                     // 显示新闻详情
                     setNewsDetail(item);
                   }}>
                     查看详情
                   </button>
-                  <button className="btn btn-ghost" style={{ padding: '4px 12px', fontSize: '12px' }} onClick={() => {
+                  <button className="btn btn-ghost" style={{ padding: '4px 12px', fontSize: '12px' }} onClick={(e) => {
+                    e.stopPropagation();
                     // 跳转到信号列表，过滤该新闻的信号
                     router.push(`/signals?news_id=${item.id}`);
                   }}>

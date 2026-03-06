@@ -7,7 +7,6 @@
   "/api/signals/route": "app/api/signals/route.js",
   "/api/analyze/status/route": "app/api/analyze/status/route.js",
   "/monitor/page": "app/monitor/page.js",
-  "/rules/page": "app/rules/page.js",
   "/asset-classes/page": "app/asset-classes/page.js",
   "/analyze/page": "app/analyze/page.js",
   "/audit/page": "app/audit/page.js",
