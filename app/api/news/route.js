@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { supabase } from '../../../lib/supabase'
 import Parser from 'rss-parser'
 
-export const runtime = 'edge'
+// 使用 Node.js 运行时，因为 rss-parser 依赖 xml2js，需要 stream 模块
+export const runtime = 'nodejs'
 
 const parser = new Parser()
 const DOMESTIC_RSS = [
