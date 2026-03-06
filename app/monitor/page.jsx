@@ -26,6 +26,8 @@ export default function MonitorPage() {
   const [loading, setLoading] = useState(true)
   const [validSignals, setValidSignals] = useState([])
   const [selectedSignal, setSelectedSignal] = useState(null)
+  const [signalsExpanded, setSignalsExpanded] = useState(false)
+  const [selectedNews, setSelectedNews] = useState(null)
   const HISTORY_PAGE_SIZE = 10
 
   const refreshStats = async () => {
