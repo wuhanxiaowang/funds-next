@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { runAnalysis } from '../../../../lib/pipeline'
 
-export const runtime = 'edge'
+// 使用 Node.js 运行时，因为依赖 nodemailer
+export const runtime = 'nodejs'
 
 export async function POST(req) {
   try {
