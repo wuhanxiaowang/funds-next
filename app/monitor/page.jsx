@@ -25,6 +25,7 @@ export default function MonitorPage() {
   const [loading, setLoading] = useState(true)
   const [validSignals, setValidSignals] = useState([])
   const [selectedSignal, setSelectedSignal] = useState(null)
+  const [signalsExpanded, setSignalsExpanded] = useState(false) // 默认收起
   const HISTORY_PAGE_SIZE = 10
 
   const refreshStats = async () => {
@@ -423,89 +424,118 @@ export default function MonitorPage() {
         </div>
       </div>
 
-      {/* 有效信号详情列表 */}
+      {/* 有效信号详情列表 - 可展开/收起 */}
       {validSignals.length > 0 && (
         <div className="glass" style={{ padding: '20px', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', margin: 0 }}>最近有效信号</h3>
-            <button 
-              className="btn btn-ghost" 
-              onClick={() => router.push('/signals?filter=valid')}
-              style={{ padding: '6px 12px', fontSize: '13px' }}
-            >
-              查看全部
-            </button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <h3 style={{ fontSize: '16px', margin: 0 }}>最近有效信号</h3>
+              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>({validSignals.length} 条)</span>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                className="btn btn-ghost" 
+                onClick={() => setSignalsExpanded(!signalsExpanded)}
+                style={{ padding: '6px 12px', fontSize: '13px' }}
+              >
+                {signalsExpanded ? '收起' : '展开'}
+              </button>
+              <button 
+                className="btn btn-ghost" 
+                onClick={() => router.push('/signals?filter=valid')}
+                style={{ padding: '6px 12px', fontSize: '13px' }}
+              >
+                查看全部
+              </button>
+            </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {validSignals.map((signal) => {
-              const dirStyle = { bg: 'transparent', color: 'var(--text)', border: '1px solid rgba(255, 255, 255, 0.1)' }
-              
-              return (
-                <div 
-                  key={signal.id}
-                  onClick={() => setSelectedSignal(signal)}
-                  style={{
-                    padding: '14px 16px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    ':hover': {
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(0, 149, 255, 0.3)'
-                    }
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '4px', color: '#fff' }}>
-                        {signal.event || '未知事件'}
+          
+          {/* 信号列表 - 根据展开状态显示 */}
+          {signalsExpanded && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
+              {validSignals.map((signal) => {
+                const dirStyle = signal.direction === '涨' 
+                  ? { bg: 'rgba(0, 255, 136, 0.15)', color: '#00ff88', border: '1px solid rgba(0, 255, 136, 0.3)' }
+                  : signal.direction === '跌'
+                  ? { bg: 'rgba(255, 77, 79, 0.15)', color: '#ff4d4f', border: '1px solid rgba(255, 77, 79, 0.3)' }
+                  : { bg: 'rgba(0, 149, 255, 0.15)', color: '#00c3ff', border: '1px solid rgba(0, 149, 255, 0.3)' }
+                
+                return (
+                  <div 
+                    key={signal.id}
+                    onClick={() => setSelectedSignal(signal)}
+                    style={{
+                      padding: '14px 16px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'
+                      e.currentTarget.style.borderColor = 'rgba(0, 149, 255, 0.3)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '4px', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {signal.event || '未知事件'}
+                        </div>
+                        <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                          {signal.asset_class || '-'} · {signal.period || '-'}
+                        </div>
                       </div>
-                      <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                        {signal.asset_class || '-'} · {signal.period || '-'}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '12px', flexShrink: 0 }}>
+                        <span style={{
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          ...dirStyle
+                        }}>
+                          {signal.direction}
+                        </span>
+                        <span style={{
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          background: 'rgba(255, 169, 64, 0.15)',
+                          color: '#ffa940',
+                          border: '1px solid rgba(255, 169, 64, 0.3)',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          强度 {signal.strength}
+                        </span>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '12px' }}>
-                      <span style={{
-                        padding: '4px 10px',
+                    {signal.news && (
+                      <div style={{
+                        fontSize: '12px',
+                        color: 'var(--text-muted)',
+                        marginTop: '8px',
+                        padding: '8px 10px',
+                        background: 'rgba(0, 0, 0, 0.2)',
                         borderRadius: '6px',
-                        fontSize: '13px',
-                        fontWeight: 600,
-                        ...dirStyle
+                        borderLeft: '3px solid rgba(0, 149, 255, 0.5)',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
                       }}>
-                        {signal.direction}
-                      </span>
-                      <span style={{
-                        padding: '4px 10px',
-                        borderRadius: '6px',
-                        fontSize: '13px',
-                        fontWeight: 600,
-                        background: 'rgba(255, 169, 64, 0.15)',
-                        color: '#ffa940',
-                        border: '1px solid rgba(255, 169, 64, 0.3)'
-                      }}>
-                        强度 {signal.strength}
-                      </span>
-                    </div>
+                        📰 {signal.news.title || '无标题'}
+                      </div>
+                    )}
                   </div>
-                  {signal.news && (
-                    <div style={{
-                      fontSize: '12px',
-                      color: 'var(--text-muted)',
-                      marginTop: '8px',
-                      padding: '8px 10px',
-                      background: 'rgba(0, 0, 0, 0.2)',
-                      borderRadius: '6px',
-                      borderLeft: '3px solid rgba(0, 149, 255, 0.5)'
-                    }}>
-                      📰 {signal.news.title || '无标题'}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       )}
 

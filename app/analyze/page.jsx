@@ -64,6 +64,12 @@ function AnalyzeContent() {
           console.log('分析状态:', currentStatus)
           setStatus(currentStatus)
           
+          // 当分析开始运行时，将refreshing设置为false
+          if (currentStatus.isRunning && refreshing) {
+            console.log('分析已开始运行，清除refreshing状态...')
+            setRefreshing(false)
+          }
+          
           // 如果分析还在运行，继续检查
           if (currentStatus.isRunning) {
             setTimeout(checkStatusLoop, 2000)
@@ -82,7 +88,7 @@ function AnalyzeContent() {
       
       // 启动状态检查循环
       console.log('启动状态检查循环...')
-      setTimeout(checkStatusLoop, 2000)
+      setTimeout(checkStatusLoop, 1000) // 缩短间隔，更快响应
     } catch (e) {
       console.error('启动分析失败:', e)
       setErrorMsg('启动分析失败: ' + (e?.message || '') + '\n请检查API路径是否正确或服务是否正常运行')
@@ -92,9 +98,7 @@ function AnalyzeContent() {
 
   const stopAnalysis = async () => {
     try {
-      await fetch('/api/analyze/status', {
-        method: 'DELETE'
-      })
+      await apiDelete('api/analyze/status')
       // 手动获取状态
       fetchStatus()
     } catch (e) {
@@ -104,9 +108,7 @@ function AnalyzeContent() {
 
   const resetStatus = async () => {
     try {
-      await fetch('/api/analyze/status', {
-        method: 'DELETE'
-      })
+      await apiDelete('api/analyze/status')
       // 手动获取状态
       fetchStatus()
     } catch (e) {
