@@ -12,6 +12,7 @@ RUN npm ci --registry https://registry.npmmirror.com
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN mkdir -p public
 RUN npm run build
 
 # 生产运行
