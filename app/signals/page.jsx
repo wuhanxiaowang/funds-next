@@ -151,7 +151,7 @@ function SignalsContent() {
       {/* 表头 */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1fr) 80px 70px 60px 80px 70px 70px 90px 70px',
+        gridTemplateColumns: 'minmax(0, 1fr) 100px 70px 60px 80px 70px 70px 90px 70px',
         gap: '16px',
         padding: '12px 20px',
         fontSize: '12px',
@@ -194,14 +194,14 @@ function SignalsContent() {
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'minmax(0, 1fr) 80px 70px 60px 80px 70px 70px 90px 70px',
+                    gridTemplateColumns: 'minmax(0, 1fr) 100px 70px 60px 80px 70px 70px 90px 70px',
                     gap: '16px',
                     padding: '12px 20px',
                     background: 'rgba(255,255,255,0.04)',
                     borderRadius: '10px',
                     transition: 'all 0.2s ease',
                     border: '1px solid transparent',
-                    alignItems: 'center'
+                    alignItems: 'flex-start'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
@@ -219,32 +219,33 @@ function SignalsContent() {
                         fontSize: '14px', 
                         fontWeight: 500, 
                         color: '#fff',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
+                        whiteSpace: 'normal',
+                        wordWrap: 'break-word',
+                        lineHeight: '1.4',
                         display: 'block',
+                        maxWidth: '100%'
                       }} 
                       title={s.event}
                     >
-                      {truncate(s.event, 16)}
+                      {s.event || '-'}
                     </span>
                   </div>
 
-                  {/* 资产类型 - 固定6字宽度 */}
+                  {/* 资产类型 */}
                   <div style={{ textAlign: 'center' }}>
                     <span 
                       style={{ 
                         fontSize: '12px', 
                         color: 'var(--text-muted)',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
+                        whiteSpace: 'normal',
+                        wordWrap: 'break-word',
+                        lineHeight: '1.4',
                         display: 'block',
                         width: '100%'
                       }}
                       title={s.asset_class}
                     >
-                      {truncate(s.asset_class, 6)}
+                      {s.asset_class || '-'}
                     </span>
                   </div>
 

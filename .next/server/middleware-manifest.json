@@ -2,6 +2,35 @@
   "version": 3,
   "middleware": {},
   "functions": {
+    "/api/audit/route": {
+      "files": [
+        "server/server-reference-manifest.js",
+        "server/app/api/audit/route_client-reference-manifest.js",
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/audit/route.js"
+      ],
+      "name": "app/api/audit/route",
+      "page": "/api/audit/route",
+      "matchers": [
+        {
+          "regexp": "^/api/audit$",
+          "originalSource": "/api/audit"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "development",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "pSbBGreVraZWdUCh1xfBnQ/Ip44bLpYYkehpd1Er9/E=",
+        "__NEXT_PREVIEW_MODE_ID": "6a128b15c60048d08309a5737e1e12e3",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "d8d2e76c72dc51b967d8065626bce9859a05ae909396b4df5bb9408e4bcbe660",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "fb0b58fd424c8cb45a8605499394cae5a4cd66bfbc4eefdd0b4f1fdecb67cd8b"
+      }
+    },
     "/api/analyze/stats/route": {
       "files": [
         "server/server-reference-manifest.js",

@@ -28,6 +28,7 @@ export default function MonitorPage() {
   const [selectedSignal, setSelectedSignal] = useState(null)
   const [signalsExpanded, setSignalsExpanded] = useState(false)
   const [selectedNews, setSelectedNews] = useState(null)
+  const [newsDetail, setNewsDetail] = useState(null)
   const HISTORY_PAGE_SIZE = 10
 
   const refreshStats = async () => {
@@ -627,7 +628,7 @@ export default function MonitorPage() {
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <button className="btn btn-ghost" style={{ padding: '4px 12px', fontSize: '12px' }} onClick={() => {
                     // 显示新闻详情
-                    alert(`新闻详情：\n标题：${item.title || '无标题'}\n\n${item.content || '无内容'}`);
+                    setNewsDetail(item);
                   }}>
                     查看详情
                   </button>
@@ -767,6 +768,157 @@ export default function MonitorPage() {
 
         </div>
       </div>
+
+      {/* 新闻详情模态框 */}
+      {newsDetail && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.8)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 10000,
+          animation: 'fadeIn 0.3s ease'
+        }}>
+          <div style={{
+            background: 'rgba(18, 18, 18, 0.95)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '16px',
+            padding: '24px',
+            maxWidth: '800px',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            width: '90%',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+            animation: 'slideUp 0.3s ease'
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              marginBottom: '20px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              paddingBottom: '16px'
+            }}>
+              <h3 style={{
+                margin: 0,
+                fontSize: '18px',
+                fontWeight: 600,
+                color: '#fff',
+                flex: 1,
+                marginRight: '16px'
+              }}>
+                {newsDetail.title || '无标题'}
+              </h3>
+              <button 
+                onClick={() => setNewsDetail(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  borderRadius: '4px',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                  e.currentTarget.style.color = '#fff'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'none'
+                  e.currentTarget.style.color = 'var(--text-muted)'
+                }}
+              >
+                ×
+              </button>
+            </div>
+            
+            {newsDetail.created_at && (
+              <div style={{
+                fontSize: '13px',
+                color: 'var(--text-muted)',
+                marginBottom: '16px'
+              }}>
+                {new Date(newsDetail.created_at).toLocaleString()}
+              </div>
+            )}
+            
+            <div style={{
+              fontSize: '14px',
+              lineHeight: '1.6',
+              color: '#fff',
+              marginBottom: '20px',
+              whiteSpace: 'pre-wrap'
+            }}>
+              {newsDetail.content || '无内容'}
+            </div>
+            
+            <div style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '12px',
+              marginTop: '20px',
+              paddingTop: '16px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <button 
+                onClick={() => setNewsDetail(null)}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: '#fff',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                }}
+              >
+                关闭
+              </button>
+              <button 
+                onClick={() => {
+                  router.push(`/signals?news_id=${newsDetail.id}`);
+                  setNewsDetail(null);
+                }}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(0, 149, 255, 0.4)',
+                  background: 'rgba(0, 149, 255, 0.15)',
+                  color: '#00c3ff',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 149, 255, 0.25)'
+                  e.currentTarget.style.borderColor = 'rgba(0, 149, 255, 0.6)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 149, 255, 0.15)'
+                  e.currentTarget.style.borderColor = 'rgba(0, 149, 255, 0.4)'
+                }}
+              >
+                查看关联信号
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )
