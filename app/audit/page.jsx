@@ -155,19 +155,11 @@ export default function AuditPage() {
             <select 
               value={filter.type}
               onChange={(e) => handleFilterChange('type', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                borderRadius: '6px',
-                border: '1px solid rgba(0, 149, 255, 0.2)',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: 'var(--text)',
-                fontSize: '14px'
-              }}
+              style={selectStyle}
             >
-              <option value="">全部类型</option>
-              <option value="user_action">用户操作</option>
-              <option value="system_action">系统行为</option>
+              <option value="" style={optionStyle}>全部类型</option>
+              <option value="user_action" style={optionStyle}>用户操作</option>
+              <option value="system_action" style={optionStyle}>系统行为</option>
             </select>
           </div>
           <div>
@@ -175,23 +167,15 @@ export default function AuditPage() {
             <select 
               value={filter.operation}
               onChange={(e) => handleFilterChange('operation', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                borderRadius: '6px',
-                border: '1px solid rgba(0, 149, 255, 0.2)',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: 'var(--text)',
-                fontSize: '14px'
-              }}
+              style={selectStyle}
             >
-              <option value="">全部操作</option>
-              <option value="trigger_analysis">触发分析</option>
-              <option value="modify_rule">修改规则</option>
-              <option value="view_data">查看数据</option>
-              <option value="fetch_news">抓取新闻</option>
-              <option value="generate_signal">生成信号</option>
-              <option value="schedule_run">定时任务</option>
+              <option value="" style={optionStyle}>全部操作</option>
+              <option value="trigger_analysis" style={optionStyle}>触发分析</option>
+              <option value="modify_rule" style={optionStyle}>修改规则</option>
+              <option value="view_data" style={optionStyle}>查看数据</option>
+              <option value="fetch_news" style={optionStyle}>抓取新闻</option>
+              <option value="generate_signal" style={optionStyle}>生成信号</option>
+              <option value="schedule_run" style={optionStyle}>定时任务</option>
             </select>
           </div>
           <div>
