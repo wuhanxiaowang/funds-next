@@ -1,9 +1,0 @@
-{
-  "name": "funds-next",
-  "installCommand": "npm install --registry https://registry.npmmirror.com",
-  "buildCommand": "npm run build:esa",
-  "assets": {
-    "directory": "out",
-    "notFoundStrategy": "singlePageApplication"
-  }
-}

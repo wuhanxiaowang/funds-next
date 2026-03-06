@@ -11,6 +11,7 @@ export default function Nav() {
     { href: '/rules', label: '规则' },
     { href: '/asset-classes', label: '投资产品' },
     { href: '/alerts', label: '提醒' },
+    { href: '/audit', label: '审计' },
   ]
   return (
     <nav className="nav">

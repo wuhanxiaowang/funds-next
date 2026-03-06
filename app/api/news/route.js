@@ -16,7 +16,15 @@ function parseRssXml(text) {
   const doc = parser.parse(text)
   const channel = doc?.rss?.channel || doc?.feed
   if (!channel) return { title: 'RSS', items: [] }
-  const title = (channel.title || 'RSS').slice(0, 200)
+  // 处理 title 可能是对象的情况
+  let title = 'RSS'
+  if (channel.title) {
+    if (typeof channel.title === 'string') {
+      title = channel.title.slice(0, 200)
+    } else if (typeof channel.title === 'object' && channel.title['#text']) {
+      title = channel.title['#text'].slice(0, 200)
+    }
+  }
   let items = channel.item || channel['atom:entry']
   if (!items) return { title, items: [] }
   if (!Array.isArray(items)) items = [items]
