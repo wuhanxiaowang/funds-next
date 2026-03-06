@@ -3,7 +3,10 @@
   "installCommand": "npm install --registry https://registry.npmmirror.com",
   "buildCommand": "npm run build",
   "assets": {
-    "directory": ".next",
+    "directory": ".next/static",
     "notFoundStrategy": "singlePageApplication"
+  },
+  "functions": {
+    "directory": ".next/server"
   }
 }
