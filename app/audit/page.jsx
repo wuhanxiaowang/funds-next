@@ -14,6 +14,8 @@ export default function AuditPage() {
   })
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
+  const [showDetail, setShowDetail] = useState(false)
+  const [currentLog, setCurrentLog] = useState(null)
   const PAGE_SIZE = 20
 
   const fetchLogs = async () => {
@@ -269,7 +271,8 @@ export default function AuditPage() {
                     className="btn btn-ghost" 
                     style={{ padding: '4px 12px', fontSize: '12px' }}
                     onClick={() => {
-                      alert(JSON.stringify(log.details || {}, null, 2))
+                      setCurrentLog(log)
+                      setShowDetail(true)
                     }}
                   >
                     查看详情
@@ -332,6 +335,138 @@ export default function AuditPage() {
           </div>
         </div>
       </div>
+
+      {/* 详情模态框 */}
+      {showDetail && currentLog && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.8)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: 'rgba(20, 25, 40, 0.95)',
+            borderRadius: '12px',
+            padding: '24px',
+            maxWidth: '800px',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            border: '1px solid rgba(0, 149, 255, 0.2)'
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px',
+              paddingBottom: '12px',
+              borderBottom: '1px solid rgba(0, 149, 255, 0.1)'
+            }}>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>
+                审计日志详情
+              </h3>
+              <button 
+                onClick={() => setShowDetail(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  borderRadius: '4px',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.color = 'var(--text)'}
+                onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '12px', marginBottom: '8px' }}>
+                <div style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>时间：</div>
+                <div style={{ fontSize: '14px' }}>
+                  {currentLog.timestamp ? new Date(currentLog.timestamp).toLocaleString() : '-'}
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '12px', marginBottom: '8px' }}>
+                <div style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>类型：</div>
+                <div style={{ fontSize: '14px', color: getTypeColor(currentLog.type) }}>
+                  {getTypeLabel(currentLog.type)}
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '12px', marginBottom: '8px' }}>
+                <div style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>操作：</div>
+                <div style={{ fontSize: '14px' }}>
+                  {getOperationLabel(currentLog.operation)}
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '12px', marginBottom: '8px' }}>
+                <div style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>用户IP：</div>
+                <div style={{ fontSize: '14px', fontFamily: 'monospace' }}>
+                  {formatIP(currentLog.ip_address)}
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '12px', marginBottom: '8px' }}>
+                <div style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>操作系统：</div>
+                <div style={{ fontSize: '14px' }}>
+                  {getOSFromUserAgent(currentLog.user_agent)}
+                </div>
+              </div>
+            </div>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 600 }}>详细信息：</h4>
+              <div style={{
+                background: 'rgba(0, 149, 255, 0.05)',
+                borderRadius: '8px',
+                padding: '16px',
+                border: '1px solid rgba(0, 149, 255, 0.1)',
+                fontFamily: 'monospace',
+                fontSize: '13px',
+                lineHeight: '1.5',
+                whiteSpace: 'pre-wrap'
+              }}>
+                {JSON.stringify(currentLog.details || {}, null, 2)}
+              </div>
+            </div>
+            
+            <div style={{ textAlign: 'right' }}>
+              <button 
+                onClick={() => setShowDetail(false)}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(0, 149, 255, 0.2)',
+                  background: 'rgba(0, 149, 255, 0.1)',
+                  color: 'var(--text)',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(0, 149, 255, 0.2)'
+                  e.target.style.borderColor = 'rgba(0, 149, 255, 0.4)'
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(0, 149, 255, 0.1)'
+                  e.target.style.borderColor = 'rgba(0, 149, 255, 0.2)'
+                }}
+              >
+                关闭
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

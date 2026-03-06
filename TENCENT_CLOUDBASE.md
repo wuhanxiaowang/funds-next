@@ -66,3 +66,32 @@ npm run build
 ## 四、后续更新
 
 代码或依赖更新后，在本地重新执行 `npm install` 和 `npm run build`，再在控制台用「本地上传文件夹」重新上传并部署即可。
+
+---
+
+## 五、容器 / EKS 部署：接口报错「Supabase not initialized」
+
+若通过 **Docker 镜像 + 腾讯云 EKS（或云托管）** 部署，容器内**没有** `.env.local`，所有环境变量必须在腾讯云控制台里配置，否则会出现：
+
+- **获取审计日志失败: {"error":"Supabase not initialized"}**
+- 其他接口也返回未初始化或 500
+
+### 解决步骤
+
+1. 打开腾讯云控制台 → 进入你部署 **fund-next** 的服务（如弹性容器 / 云托管 / 工作负载）。
+2. 找到 **配置** / **环境变量** / **Workload 环境变量**。
+3. 添加与本地 `.env.local` **完全一致**的变量，至少包含：
+
+| 变量名 | 说明 |
+|--------|------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase 项目 URL（Supabase Dashboard → Settings → API） |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key（同上，勿暴露到前端） |
+
+4. 若用到分析、邮件、审计等，一并配置：
+   - `OPENAI_API_KEY` 或 `DEEPSEEK_API_KEY`、`VOLCENGINE_API_KEY` 等
+   - `RESEND_API_KEY`、`RESEND_FROM`、`EMAIL_TO`
+   - `ALERT_STRENGTH_THRESHOLD`（可选）
+
+5. 保存后**重新部署**或**重启**当前版本，使环境变量生效。
+
+配置正确后，再访问审计、监控、分析等页面，接口即可正常返回。

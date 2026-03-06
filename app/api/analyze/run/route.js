@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server'
 import { runAnalysis } from '../../../../lib/pipeline'
 import { logAudit, AUDIT_TYPES, AUDIT_OPERATIONS } from '../../../../lib/audit'
 
-// Cloudflare Pages 要求使用 Edge Runtime
-export const runtime = 'edge'
+// 腾讯云 Docker/Node 部署使用 Node 运行时；Edge 在 standalone 下可能异常
+export const runtime = 'nodejs'
 
 export async function POST(req) {
   try {

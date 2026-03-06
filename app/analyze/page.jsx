@@ -19,6 +19,7 @@ function AnalyzeContent() {
     currentNews: null
   })
   const [refreshing, setRefreshing] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
   const [autoStarted, setAutoStarted] = useState(false)
   const [analysisHistory, setAnalysisHistory] = useState([])
   const [expandedItems, setExpandedItems] = useState(new Set())
@@ -40,6 +41,7 @@ function AnalyzeContent() {
   }
 
   const runAnalysis = async () => {
+    setErrorMsg('')
     setRefreshing(true)
     try {
       await apiPost('api/analyze/run', null, { page_size: 1 })
@@ -65,6 +67,7 @@ function AnalyzeContent() {
       setTimeout(checkStatusLoop, 2000)
     } catch (e) {
       console.error('启动分析失败:', e)
+      setErrorMsg(e?.message || '启动分析失败，请查看控制台或检查接口配置')
       setRefreshing(false)
     }
   }
@@ -186,6 +189,11 @@ function AnalyzeContent() {
               {status.isRunning ? '分析中' : '就绪'}
             </span>
           </div>
+          {errorMsg && (
+            <div style={{ width: '100%', padding: '8px 12px', background: 'rgba(255,80,80,0.15)', border: '1px solid rgba(255,80,80,0.4)', borderRadius: '8px', fontSize: '13px', color: 'var(--danger, #f55)' }}>
+              {errorMsg}
+            </div>
+          )}
           <div className="actions-row">
             <button className="btn btn-primary" onClick={runAnalysis} disabled={status.isRunning || refreshing}>
               {status.isRunning ? '分析中...' : refreshing ? '启动中...' : '开始分析'}
