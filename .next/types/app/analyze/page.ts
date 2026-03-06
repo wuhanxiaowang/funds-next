@@ -1,4 +1,4 @@
-// File: D:\投资模型\frontend-next\app\analyze\page.jsx
+// File: D:\投资模型\funds-next\app\analyze\page.jsx
 import * as entry from '../../../../app/analyze/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

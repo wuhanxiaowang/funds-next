@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '../../../../lib/supabase'
 
-export const dynamic = 'force-dynamic'
-
 export async function GET() {
   if (!supabase) {
     return NextResponse.json({ newsCount: 0, signalCount: 0, validSignalCount: 0, alertCount: 0 })

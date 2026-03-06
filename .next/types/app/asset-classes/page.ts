@@ -1,4 +1,4 @@
-// File: D:\投资模型\frontend-next\app\asset-classes\page.jsx
+// File: D:\投资模型\funds-next\app\asset-classes\page.jsx
 import * as entry from '../../../../app/asset-classes/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

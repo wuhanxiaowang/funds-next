@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
 
-export const dynamic = 'force-dynamic'
-
 // 全局变量存储分析状态
 let analysisStatus = {
   isRunning: false,
