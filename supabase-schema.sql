@@ -53,3 +53,13 @@ CREATE POLICY "Allow all for service" ON news FOR ALL USING (true) WITH CHECK (t
 CREATE POLICY "Allow all for service" ON signals FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for service" ON alerts FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for service" ON rules FOR ALL USING (true) WITH CHECK (true);
+
+-- 分析状态（多实例共享，解决「开始分析」后页面不刷新的问题）
+CREATE TABLE IF NOT EXISTS analysis_status (
+  id INT PRIMARY KEY DEFAULT 1,
+  data JSONB NOT NULL DEFAULT '{}',
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT single_row CHECK (id = 1)
+);
+ALTER TABLE analysis_status ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all for service" ON analysis_status FOR ALL USING (true) WITH CHECK (true);

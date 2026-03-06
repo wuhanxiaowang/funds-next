@@ -1,3 +1,9 @@
 {
-  "/api/analyze/status/route": "app/api/analyze/status/route.js"
+  "/api/analyze/stats/route": "app/api/analyze/stats/route.js",
+  "/api/analyze/schedule/status/route": "app/api/analyze/schedule/status/route.js",
+  "/api/news/route": "app/api/news/route.js",
+  "/api/news/schedule/status/route": "app/api/news/schedule/status/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/rules/page": "app/rules/page.js",
+  "/monitor/page": "app/monitor/page.js"
 }

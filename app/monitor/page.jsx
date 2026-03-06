@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { apiGet, apiPost } from '../../lib/api'
 import { cronService } from '../../lib/cron-service'
+import { CardSkeleton } from '../../components/Loading'
 
 export default function MonitorPage() {
   const router = useRouter()
@@ -20,9 +21,11 @@ export default function MonitorPage() {
   const [newsTab, setNewsTab] = useState('today') // 'today' 或 'history'
   const [historyPage, setHistoryPage] = useState(1)
   const [nextTimes, setNextTimes] = useState({ nextNewsTime: null, nextAnalysisTime: null })
+  const [loading, setLoading] = useState(true)
   const HISTORY_PAGE_SIZE = 10
 
   const refreshStats = async () => {
+    setLoading(true)
     try {
       const data = await apiGet('api/analyze/stats')
       setStats({
@@ -35,6 +38,8 @@ export default function MonitorPage() {
       setError('')
     } catch (e) {
       setError('获取统计失败: ' + (e.message || ''))
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -375,34 +380,47 @@ export default function MonitorPage() {
       )}
 
       <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon green">📰</div>
-          <div>
-            <div className="stat-title">今日新闻</div>
-            <div className="stat-value">{stats.newsCount}</div>
-          </div>
-        </div>
-        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/signals')}>
-          <div className="stat-icon blue">📊</div>
-          <div>
-            <div className="stat-title">今日信号</div>
-            <div className="stat-value">{stats.signalCount}</div>
-          </div>
-        </div>
-        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/signals?filter=valid')}>
-          <div className="stat-icon orange">✓</div>
-          <div>
-            <div className="stat-title">有效信号</div>
-            <div className="stat-value">{stats.validSignalCount}</div>
-          </div>
-        </div>
-        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/alerts')}>
-          <div className="stat-icon red">🔔</div>
-          <div>
-            <div className="stat-title">提醒次数</div>
-            <div className="stat-value">{stats.alertCount}</div>
-          </div>
-        </div>
+        {loading ? (
+          // 显示骨架屏
+          <>
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </>
+        ) : (
+          // 显示实际数据
+          <>
+            <div className="stat-card">
+              <div className="stat-icon green">📰</div>
+              <div>
+                <div className="stat-title">今日新闻</div>
+                <div className="stat-value">{stats.newsCount}</div>
+              </div>
+            </div>
+            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/signals')}>
+              <div className="stat-icon blue">📊</div>
+              <div>
+                <div className="stat-title">今日信号</div>
+                <div className="stat-value">{stats.signalCount}</div>
+              </div>
+            </div>
+            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/signals?filter=valid')}>
+              <div className="stat-icon orange">✓</div>
+              <div>
+                <div className="stat-title">有效信号</div>
+                <div className="stat-value">{stats.validSignalCount}</div>
+              </div>
+            </div>
+            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/alerts')}>
+              <div className="stat-icon red">🔔</div>
+              <div>
+                <div className="stat-title">提醒次数</div>
+                <div className="stat-value">{stats.alertCount}</div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* 新闻模块 */}
