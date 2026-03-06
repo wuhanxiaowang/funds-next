@@ -7,6 +7,7 @@
     "build": "next build",
     "build:static": "node scripts/build-static.js",
     "build:cf": "node scripts/build-cf.js",
+    "build:pages": "npx @cloudflare/next-on-pages@1",
     "start": "next start"
   },
   "dependencies": {
