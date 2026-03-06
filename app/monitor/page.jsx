@@ -125,16 +125,40 @@ export default function MonitorPage() {
     return () => clearInterval(interval)
   }, [])
 
+  // 页面可见性API，只在页面可见时加载数据
   useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // 页面变为可见时加载数据
+        refreshStats()
+        refreshSchedule()
+        refreshNewsSchedule()
+        refreshNews()
+        refreshAnalysisStatus()
+      }
+    }
+    
+    // 初始加载
     refreshStats()
     refreshSchedule()
     refreshNewsSchedule()
     refreshNews()
     refreshAnalysisStatus()
     
+    // 监听页面可见性变化
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
     // 每3秒刷新一次分析状态
-    const interval = setInterval(refreshAnalysisStatus, 3000)
-    return () => clearInterval(interval)
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        refreshAnalysisStatus()
+      }
+    }, 3000)
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      clearInterval(interval)
+    }
   }, [])
 
   const runAnalysis = async () => {
@@ -332,7 +356,7 @@ export default function MonitorPage() {
             <div className="stat-value">{stats.signalCount}</div>
           </div>
         </div>
-        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/signals')}>
+        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => router.push('/signals?filter=valid')}>
           <div className="stat-icon orange">✓</div>
           <div>
             <div className="stat-title">有效信号</div>

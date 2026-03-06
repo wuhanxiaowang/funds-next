@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
+    "fast-xml-parser": "^5.4.2",
     "next": "^15.5.2",
     "nodemailer": "^8.0.1",
     "openai": "^4.52.0",

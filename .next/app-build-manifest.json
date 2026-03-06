@@ -1,15 +1,5 @@
 {
   "pages": {
-    "/api/news/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/news/route.js"
-    ],
-    "/api/analyze/stats/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/analyze/stats/route.js"
-    ],
     "/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -21,11 +11,6 @@
       "static/chunks/main-app.js",
       "static/chunks/app/analyze/page.js"
     ],
-    "/api/analyze/run/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/analyze/run/route.js"
-    ],
     "/api/analyze/status/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -35,41 +20,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/signals/route.js"
-    ],
-    "/asset-classes/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/asset-classes/page.js"
-    ],
-    "/api/asset-classes/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/asset-classes/route.js"
-    ],
-    "/rules/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/rules/page.js"
-    ],
-    "/api/rules/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/rules/route.js"
-    ],
-    "/monitor/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/monitor/page.js"
-    ],
-    "/api/analyze/schedule/status/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/analyze/schedule/status/route.js"
-    ],
-    "/api/news/schedule/status/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/news/schedule/status/route.js"
     ],
     "/_not-found/page": [
       "static/chunks/webpack.js",

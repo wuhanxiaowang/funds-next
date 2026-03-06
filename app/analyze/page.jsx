@@ -114,13 +114,31 @@ function AnalyzeContent() {
     })
   }
 
-  // 组件挂载时获取数据，如果正在分析则恢复轮询
+  // 页面可见性API，只在页面可见时加载数据
   useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const init = async () => {
+          await fetchStatus()
+          await fetchAnalysisHistory()
+        }
+        init()
+      }
+    }
+    
+    // 初始加载
     const init = async () => {
       await fetchStatus()
       await fetchAnalysisHistory()
     }
     init()
+    
+    // 监听页面可见性变化
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [])
 
   // 当检测到正在分析时，恢复状态轮询

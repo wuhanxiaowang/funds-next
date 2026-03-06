@@ -2,6 +2,5 @@
   "/api/analyze/status/route": "app/api/analyze/status/route.js",
   "/api/signals/route": "app/api/signals/route.js",
   "/_not-found/page": "app/_not-found/page.js",
-  "/api/analyze/run/route": "app/api/analyze/run/route.js",
   "/analyze/page": "app/analyze/page.js"
 }

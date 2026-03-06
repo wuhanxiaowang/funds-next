@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import { runAnalysis } from '../../../../lib/pipeline'
 
-// 使用 Node.js 运行时，因为依赖 nodemailer
-export const runtime = 'nodejs'
+// Cloudflare Pages 要求使用 Edge Runtime
+export const runtime = 'edge'
 
 export async function POST(req) {
   try {

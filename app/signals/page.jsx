@@ -6,23 +6,49 @@ import { apiGet } from '../../lib/api'
 function SignalsContent() {
   const searchParams = useSearchParams()
   const newsId = searchParams.get('news_id')
+  const filter = searchParams.get('filter')
   
   const [signals, setSignals] = useState([])
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
 
+  // 页面可见性API，只在页面可见时加载数据
   useEffect(() => {
-    let ok = true
-    apiGet('api/signals', { skip: 0, limit: 500 })
-      .then((data) => { if (ok) setSignals(Array.isArray(data) ? data : []) })
-      .catch((e) => { if (ok) setError(e.message || '获取失败') })
-    return () => { ok = false }
+    const loadData = () => {
+      let ok = true
+      apiGet('api/signals', { skip: 0, limit: 500 })
+        .then((data) => { if (ok) setSignals(Array.isArray(data) ? data : []) })
+        .catch((e) => { if (ok) setError(e.message || '获取失败') })
+      return () => { ok = false }
+    }
+    
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadData()
+      }
+    }
+    
+    // 初始加载
+    loadData()
+    
+    // 监听页面可见性变化
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [])
 
   const filtered = signals.filter((s) => {
     // 按新闻ID过滤
     if (newsId && s.news_id != newsId) {
       return false
+    }
+    
+    // 按有效信号过滤
+    if (filter === 'valid') {
+      // 有效信号：方向不是'无影响'且强度大于0
+      return s.direction && s.direction !== '无影响' && s.direction !== '无' && s.strength > 0
     }
     
     // 按搜索关键词过滤
