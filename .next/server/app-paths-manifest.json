@@ -7,6 +7,7 @@
   "/api/news/route": "app/api/news/route.js",
   "/api/signals/route": "app/api/signals/route.js",
   "/api/analyze/status/route": "app/api/analyze/status/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/monitor/page": "app/monitor/page.js",
   "/signals/page": "app/signals/page.js"
 }

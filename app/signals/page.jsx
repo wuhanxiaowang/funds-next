@@ -194,14 +194,14 @@ function SignalsContent() {
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: '2fr 1.2fr 60px 50px 70px 60px 60px 80px 60px',
-                    gap: '12px',
+                    gridTemplateColumns: 'minmax(0, 1fr) 80px 70px 60px 80px 70px 70px 90px 70px',
+                    gap: '16px',
                     padding: '12px 20px',
                     background: 'rgba(255,255,255,0.04)',
                     borderRadius: '10px',
                     transition: 'all 0.2s ease',
                     border: '1px solid transparent',
-                    alignItems: 'start'
+                    alignItems: 'center'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
@@ -212,32 +212,39 @@ function SignalsContent() {
                     e.currentTarget.style.borderColor = 'transparent'
                   }}
                 >
-                  {/* 事件 - 允许换行显示完整内容 */}
+                  {/* 事件 */}
                   <div style={{ minWidth: 0 }}>
                     <span 
                       style={{ 
                         fontSize: '14px', 
                         fontWeight: 500, 
                         color: '#fff',
-                        lineHeight: '1.5',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
                         display: 'block',
                       }} 
+                      title={s.event}
                     >
-                      {s.event || '-'}
+                      {truncate(s.event, 16)}
                     </span>
                   </div>
 
-                  {/* 资产类型 - 允许换行显示完整内容 */}
-                  <div style={{ textAlign: 'left' }}>
+                  {/* 资产类型 - 固定6字宽度 */}
+                  <div style={{ textAlign: 'center' }}>
                     <span 
                       style={{ 
                         fontSize: '12px', 
                         color: 'var(--text-muted)',
-                        lineHeight: '1.5',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
                         display: 'block',
+                        width: '100%'
                       }}
+                      title={s.asset_class}
                     >
-                      {s.asset_class || '-'}
+                      {truncate(s.asset_class, 6)}
                     </span>
                   </div>
 
@@ -265,8 +272,7 @@ function SignalsContent() {
                       fontSize: '13px', 
                       fontWeight: 600, 
                       color: s.probability >= 70 ? '#00ff88' : s.probability >= 50 ? '#ffa940' : '#fff',
-                      lineHeight: '1.5',
-                      display: 'block'
+                      whiteSpace: 'nowrap'
                     }}>
                       {s.probability != null ? `${s.probability}%` : '-'}
                     </span>
@@ -277,10 +283,13 @@ function SignalsContent() {
                     <span style={{ 
                       fontSize: '12px', 
                       color: '#fff',
-                      lineHeight: '1.5',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
                       display: 'block',
-                    }}>
-                      {s.period || '-'}
+                      width: '100%'
+                    }} title={s.period}>
+                      {truncate(s.period, 6)}
                     </span>
                   </div>
 
@@ -322,8 +331,7 @@ function SignalsContent() {
                       fontSize: '12px', 
                       fontWeight: 500, 
                       color: '#ffa940',
-                      lineHeight: '1.5',
-                      display: 'block'
+                      whiteSpace: 'nowrap'
                     }}>
                       {s.operation || '-'}
                     </span>
@@ -334,7 +342,9 @@ function SignalsContent() {
                     <span style={{ 
                       fontSize: '12px', 
                       color: 'var(--text-muted)',
-                      lineHeight: '1.5',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
                       display: 'block'
                     }}>
                       {s.created_at 
