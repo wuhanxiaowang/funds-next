@@ -65,17 +65,44 @@ export default function MonitorPage() {
     }
   }
 
+  // 去除HTML标签函数
+  const stripHtml = (html) => {
+    if (!html || typeof html !== 'string') return ''
+    // 先替换常见的HTML实体
+    let text = html
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&nbsp;/g, ' ')
+    
+    // 去除HTML标签
+    text = text.replace(/<[^>]*>/g, ' ')
+    
+    // 去除多余空格
+    text = text.replace(/\s+/g, ' ').trim()
+    
+    return text
+  }
+
   const refreshNews = async () => {
     try {
       const data = await apiGet('api/news', { limit: 15 })
       // 处理返回格式（可能是数组或对象）
       const newsList = data.news || (Array.isArray(data) ? data : [])
-      setAllNews(newsList)
+      // 去除HTML标签
+      const cleanedNews = newsList.map(item => ({
+        ...item,
+        content: stripHtml(item.content || ''),
+        title: stripHtml(item.title || '')
+      }))
+      setAllNews(cleanedNews)
       
       // 分离今日新闻和历史新闻
       const today = new Date().toISOString().slice(0, 10)
-      const todayNews = newsList.filter(n => n.created_at && n.created_at.startsWith(today))
-      const historyNews = newsList.filter(n => !n.created_at || !n.created_at.startsWith(today))
+      const todayNews = cleanedNews.filter(n => n.created_at && n.created_at.startsWith(today))
+      const historyNews = cleanedNews.filter(n => !n.created_at || !n.created_at.startsWith(today))
       
       // 根据当前标签显示对应的新闻
       if (newsTab === 'today') {
@@ -232,11 +259,17 @@ export default function MonitorPage() {
       const addedCount = data.addedCount || 0
       const totalCount = data.totalCount || newsList.length
       
-      setAllNews(newsList)
+      // 去除HTML标签
+      const cleanedNews = newsList.map(item => ({
+        ...item,
+        content: stripHtml(item.content || ''),
+        title: stripHtml(item.title || '')
+      }))
+      setAllNews(cleanedNews)
       // 根据当前标签更新显示
       const today = new Date().toISOString().slice(0, 10)
-      const todayNews = newsList.filter(n => n.created_at && n.created_at.startsWith(today))
-      const historyNews = newsList.filter(n => !n.created_at || !n.created_at.startsWith(today))
+      const todayNews = cleanedNews.filter(n => n.created_at && n.created_at.startsWith(today))
+      const historyNews = cleanedNews.filter(n => !n.created_at || !n.created_at.startsWith(today))
       
       if (newsTab === 'today') {
         setNews(todayNews)

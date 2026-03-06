@@ -18,8 +18,9 @@ RUN npm run build
 # 生产运行
 FROM base AS runner
 ENV NODE_ENV=production
-ENV PORT=3000
-EXPOSE 3000
+# EKS 健康检查默认探 80 端口，与 Next 监听端口一致
+ENV PORT=80
+EXPOSE 80
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
