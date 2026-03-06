@@ -19,7 +19,7 @@
 - **数据库**：Supabase（PostgreSQL）
 - **AI 分析**：支持火山引擎豆包、OpenAI 等大模型
 - **邮件服务**：支持 QQ 邮箱发送提醒
-- **部署**：支持 Vercel、Cloudflare Pages
+- **部署**：阿里云函数计算 FC（见 [ALIYUN_FC.md](./ALIYUN_FC.md)）
 
 ## 快速开始
 
@@ -112,39 +112,7 @@ npm run dev
 
 ### 5. 部署
 
-#### 5.1 部署到 Vercel
-
-1. 代码推送到 GitHub 仓库
-2. 在 [Vercel](https://vercel.com) 导入仓库
-3. **Root Directory** 选择 `frontend-next`
-4. 在 Vercel 项目 **Settings → Environment Variables** 添加上述环境变量
-5. 部署完成后即可访问
-
-#### 5.2 部署到 Cloudflare Pages
-
-使用 Cloudflare 官方构建工具 `@cloudflare/next-on-pages`：
-
-**注意**：`@cloudflare/next-on-pages` 在 Windows 系统上运行不稳定，建议在 Windows Subsystem for Linux (WSL) 或 macOS/Linux 系统上构建。
-
-**构建（在 WSL 或 macOS/Linux 上）：**
-```bash
-npm run build:cf
-```
-
-**部署：**
-```bash
-wrangler pages deploy .vercel/output/static --project-name your-project
-```
-
-在 Cloudflare Pages 控制台配置：
-- **Build command**：`npm run build:cf`
-- **Build output directory**：`.vercel/output/static`
-- **Environment Variables**：添加上述环境变量
-
-**Windows 系统解决方案：**
-1. **使用 WSL**：安装 Windows Subsystem for Linux，在 WSL 中运行构建命令
-2. **使用 Cloudflare Pages 自动构建**：将代码推送到 GitHub 仓库，让 Cloudflare Pages 在云端构建
-3. **使用静态导出**：如果不需要 API 路由，可使用 `npm run build:static` 构建静态版本
+部署到**阿里云函数计算 FC**（含前端与 API），详见 **[ALIYUN_FC.md](./ALIYUN_FC.md)**。
 
 ## 使用说明
 

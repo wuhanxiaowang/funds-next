@@ -8,8 +8,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:esa": "node scripts/build-esa.js",
     "build:pages": "npx @cloudflare/next-on-pages@1",
-    "start": "next start"
+    "start": "next start",
+    "start:fc": "node scripts/fc-server.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '../../../lib/supabase'
 import { XMLParser } from 'fast-xml-parser'
+import { logAudit, AUDIT_TYPES, AUDIT_OPERATIONS } from '../../../lib/audit'
 
 // Cloudflare Pages 要求使用 Edge Runtime
 export const runtime = 'edge'
@@ -100,8 +101,22 @@ export async function GET(req) {
 
   let addedCount = 0
   if (fetch) {
+    // 记录系统操作审计日志 - 抓取新闻
+    await logAudit(AUDIT_TYPES.SYSTEM_ACTION, AUDIT_OPERATIONS.FETCH_NEWS, {
+      source: 'RSS',
+      count: 10
+    })
+    
     const rssNews = await fetchRssNews(10)
     addedCount = await saveNewsToDatabase(rssNews) || 0
+    
+    // 记录新闻抓取结果
+    await logAudit(AUDIT_TYPES.SYSTEM_ACTION, AUDIT_OPERATIONS.FETCH_NEWS, {
+      source: 'RSS',
+      count: 10,
+      added_count: addedCount,
+      status: 'completed'
+    })
   }
 
   if (!supabase) return NextResponse.json({ news: [], totalCount: 0 }, { status: 200 })
