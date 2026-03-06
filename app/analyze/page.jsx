@@ -1,7 +1,7 @@
 'use client'
-import { Suspense, useState, useEffect } from 'react'
+import { Suspense, useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { apiGet, apiPost } from '../../lib/api'
+import { apiGet, apiPost, apiDelete } from '../../lib/api'
 
 function AnalyzeContent() {
   const searchParams = useSearchParams()
@@ -25,16 +25,15 @@ function AnalyzeContent() {
   const [expandedItems, setExpandedItems] = useState(new Set())
   const [historyExpanded, setHistoryExpanded] = useState(true)
 
-  const fetchStatus = async () => {
+  const fetchStatus = useCallback(async () => {
     try {
       console.log('获取分析状态...')
       const data = await apiGet('api/analyze/status')
       console.log('获取到的分析状态:', data)
-      const previousRunning = status.isRunning
       setStatus(data)
       
-      // 当分析从运行状态变为非运行状态时，更新历史记录
-      if (previousRunning && !data.isRunning && data.result) {
+      // 分析完成后更新历史记录
+      if (!data.isRunning && data.result) {
         console.log('分析完成，更新历史记录...')
         fetchAnalysisHistory()
       }
@@ -42,7 +41,16 @@ function AnalyzeContent() {
       console.error('获取分析状态失败:', e)
       setErrorMsg('获取分析状态失败: ' + (e?.message || ''))
     }
-  }
+  }, [])
+
+  const fetchAnalysisHistory = useCallback(async () => {
+    try {
+      const data = await apiGet('api/signals', { limit: 20 })
+      setAnalysisHistory(Array.isArray(data) ? data : [])
+    } catch (e) {
+      console.error('获取分析历史失败:', e)
+    }
+  }, [])
 
   const runAnalysis = async () => {
     setErrorMsg('')
@@ -116,15 +124,6 @@ function AnalyzeContent() {
     }
   }
 
-  const fetchAnalysisHistory = async () => {
-    try {
-      const data = await apiGet('api/signals', { limit: 20 })
-      setAnalysisHistory(Array.isArray(data) ? data : [])
-    } catch (e) {
-      console.error('获取分析历史失败:', e)
-    }
-  }
-
   const toggleExpand = (id) => {
     setExpandedItems(prev => {
       const newSet = new Set(prev)
@@ -137,8 +136,11 @@ function AnalyzeContent() {
     })
   }
 
-  // 页面可见性API，只在页面可见时加载数据
+  // 页面初始化和定期获取状态
   useEffect(() => {
+    let intervalId = null
+    
+    // 只在页面可见时加载数据
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         console.log('页面变为可见，刷新状态...')
@@ -158,46 +160,23 @@ function AnalyzeContent() {
     }
     init()
     
+    // 每30秒获取一次状态
+    intervalId = setInterval(async () => {
+      if (document.visibilityState === 'visible') {
+        await fetchStatus()
+      }
+    }, 30000)
+    
     // 监听页面可见性变化
     document.addEventListener('visibilitychange', handleVisibilityChange)
     
     return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [fetchStatus, fetchAnalysisHistory])
-
-  // 当检测到正在分析时，恢复状态轮询
-  useEffect(() => {
-    if (status.isRunning && !refreshing) {
-      console.log('检测到分析正在运行，启动状态轮询...')
-      // 恢复轮询
-      const checkStatusLoop = async () => {
-        try {
-          console.log('轮询分析状态...')
-          const currentStatus = await apiGet('api/analyze/status')
-          console.log('轮询到的分析状态:', currentStatus)
-          setStatus(currentStatus)
-          
-          // 如果分析还在运行，继续检查
-          if (currentStatus.isRunning) {
-            console.log('分析仍在运行，继续轮询...')
-            setTimeout(checkStatusLoop, 2000)
-          } else {
-            // 分析完成，更新历史记录
-            console.log('分析完成，更新历史记录...')
-            fetchAnalysisHistory()
-          }
-        } catch (e) {
-          console.error('轮询状态失败:', e)
-          setErrorMsg('轮询状态失败: ' + (e?.message || ''))
-        }
-      }
-      
-      // 启动状态检查循环
-      const timer = setTimeout(checkStatusLoop, 1000) // 缩短轮询间隔，更快响应
-      return () => clearTimeout(timer)
-    }
-  }, [status.isRunning, refreshing, fetchAnalysisHistory])
 
   // 自动启动分析（从监控页面跳转过来时）
   useEffect(() => {
