@@ -1,16 +1,5 @@
 {
   "pages": {
-    "/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/layout.css",
-      "static/chunks/app/layout.js"
-    ],
-    "/monitor/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/monitor/page.js"
-    ],
     "/api/analyze/status/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -36,6 +25,17 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/news/route.js"
     ],
+    "/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
+    ],
+    "/monitor/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/monitor/page.js"
+    ],
     "/analyze/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -50,6 +50,26 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/signals/page.js"
+    ],
+    "/api/news/schedule/start/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/news/schedule/start/route.js"
+    ],
+    "/api/analyze/schedule/start/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/analyze/schedule/start/route.js"
+    ],
+    "/api/analyze/schedule/stop/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/analyze/schedule/stop/route.js"
+    ],
+    "/api/news/schedule/stop/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/news/schedule/stop/route.js"
     ],
     "/rules/page": [
       "static/chunks/webpack.js",
@@ -71,45 +91,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/asset-classes/page.js"
     ],
-    "/alerts/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/alerts/page.js"
-    ],
-    "/api/alerts/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/alerts/route.js"
-    ],
-    "/audit/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/audit/page.js"
-    ],
-    "/api/audit/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/audit/route.js"
+      "static/chunks/app/page.js"
     ],
     "/api/analyze/run/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/analyze/run/route.js"
-    ],
-    "/api/news/schedule/start/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/news/schedule/start/route.js"
-    ],
-    "/api/news/schedule/stop/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/news/schedule/stop/route.js"
-    ],
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
     ],
     "/_not-found/page": [
       "static/chunks/webpack.js",

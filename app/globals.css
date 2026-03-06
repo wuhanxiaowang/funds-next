@@ -463,7 +463,7 @@ body::after {
 }
 
 .table tr:hover td {
-  background: rgba(56, 189, 248, 0.05);
+  background: transparent;
 }
 
 /* 标签 */

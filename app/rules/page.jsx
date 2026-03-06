@@ -110,54 +110,60 @@ export default function RulesPage() {
 
   return (
     <div>
-      <div className="glass" style={{ padding: '16px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 600 }}>规则管理 · 共 {rules.length} 条</h2>
-        <button className="btn btn-primary" onClick={openAdd}>添加规则</button>
+      <div className="glass" style={{ padding: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: 600 }}>规则管理 · 共 {rules.length} 条</h2>
+        <button className="btn btn-primary" onClick={openAdd} style={{ padding: '10px 20px', borderRadius: '8px', background: '#00c3ff', color: '#000', fontWeight: '600' }}>添加规则</button>
       </div>
-      {error && <div className="alert" style={{ background: 'rgba(255,77,79,0.15)' }}>{error}</div>}
-      <div className="table-wrap">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>规则名称</th>
-              <th>触发关键词</th>
-              <th>影响品类</th>
-              <th>操作建议</th>
-              <th>强度阈值</th>
-              <th>创建时间</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rules.map((r) => (
-              <tr key={r.id}>
-                <td>{r.id}</td>
-                <td>{r.rule_name}</td>
-                <td>{r.keywords}</td>
-                <td>{r.asset_class}</td>
-                <td><span className={`tag ${r.operation === '买入' ? 'tag-success' : r.operation === '卖出' ? 'tag-danger' : 'tag-info'}`}>{r.operation}</span></td>
-                <td>{r.threshold}</td>
-                <td>{r.created_at ? String(r.created_at).slice(0, 19).replace('T', ' ') : '-'}</td>
-                <td>
-                  <button className="btn btn-ghost" style={{ padding: '4px 12px', fontSize: '12px', color: 'var(--primary)', marginRight: '8px' }} onClick={() => openEdit(r)}>
-                    编辑
-                  </button>
-                  <button className="btn btn-ghost" style={{ padding: '4px 12px', fontSize: '12px', color: 'var(--danger)' }} onClick={() => deleteRule(r.id)}>
-                    删除
-                  </button>
-                </td>
+      {error && <div className="alert" style={{ background: 'rgba(255,77,79,0.15)', border: '1px solid rgba(255,77,79,0.3)', padding: '12px 16px', borderRadius: '8px', marginBottom: '20px' }}>{error}</div>}
+      <div className="glass" style={{ padding: '20px', marginBottom: '20px' }}>
+        <div className="table-wrap">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>规则名称</th>
+                <th>触发关键词</th>
+                <th>影响品类</th>
+                <th>操作建议</th>
+                <th>强度阈值</th>
+                <th>创建时间</th>
+                <th>操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {rules.length === 0 && <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>暂无规则，点击「添加规则」创建</div>}
+            </thead>
+            <tbody>
+              {rules.map((r) => (
+                <tr key={r.id}>
+                  <td>{r.id}</td>
+                  <td>{r.rule_name}</td>
+                  <td>{r.keywords}</td>
+                  <td>{r.asset_class}</td>
+                  <td>
+                    <span className={`tag ${r.operation === '买入' ? 'tag-success' : r.operation === '卖出' ? 'tag-danger' : 'tag-info'}`}>
+                      {r.operation}
+                    </span>
+                  </td>
+                  <td>{r.threshold}</td>
+                  <td>{r.created_at ? String(r.created_at).slice(0, 19).replace('T', ' ') : '-'}</td>
+                  <td>
+                    <button className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: '12px', color: 'var(--primary)', marginRight: '8px', fontWeight: '500' }} onClick={() => openEdit(r)}>
+                      编辑
+                    </button>
+                    <button className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: '12px', color: 'var(--danger)', fontWeight: '500' }} onClick={() => deleteRule(r.id)}>
+                      删除
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {rules.length === 0 && <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>暂无规则，点击「添加规则」创建</div>}
+        </div>
       </div>
 
       {modalOpen && (
         <div className="overlay" onClick={() => setModalOpen(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>{editingRuleId ? '编辑规则' : '添加规则'}</h3>
+            <h3 style={{ marginBottom: '24px', fontSize: '18px', fontWeight: '600' }}>{editingRuleId ? '编辑规则' : '添加规则'}</h3>
             <div className="form-group">
               <label>规则名称 *</label>
               <input
@@ -209,7 +215,7 @@ export default function RulesPage() {
             </div>
             <div className="modal-actions">
               <button className="btn btn-ghost" onClick={() => setModalOpen(false)}>取消</button>
-              <button className="btn btn-primary" onClick={saveRule} disabled={saving}>{saving ? '保存中...' : '保存'}</button>
+              <button className="btn btn-primary" onClick={saveRule} disabled={saving} style={{ background: '#00c3ff', color: '#000', fontWeight: '600' }}>{saving ? '保存中...' : '保存'}</button>
             </div>
           </div>
         </div>

@@ -27,16 +27,20 @@ function AnalyzeContent() {
 
   const fetchStatus = async () => {
     try {
+      console.log('获取分析状态...')
       const data = await apiGet('api/analyze/status')
+      console.log('获取到的分析状态:', data)
       const previousRunning = status.isRunning
       setStatus(data)
       
       // 当分析从运行状态变为非运行状态时，更新历史记录
       if (previousRunning && !data.isRunning && data.result) {
+        console.log('分析完成，更新历史记录...')
         fetchAnalysisHistory()
       }
     } catch (e) {
       console.error('获取分析状态失败:', e)
+      setErrorMsg('获取分析状态失败: ' + (e?.message || ''))
     }
   }
 
@@ -44,30 +48,44 @@ function AnalyzeContent() {
     setErrorMsg('')
     setRefreshing(true)
     try {
-      await apiPost('api/analyze/run', null, { page_size: 1 })
+      console.log('开始调用分析API...')
+      const response = await apiPost('api/analyze/run', null, { page_size: 1 })
+      console.log('分析API调用成功:', response)
+      
       // 立即获取状态
+      console.log('立即获取分析状态...')
       await fetchStatus()
       
       // 分析过程中每2秒检查一次状态，直到分析完成
       const checkStatusLoop = async () => {
-        const currentStatus = await apiGet('api/analyze/status')
-        setStatus(currentStatus)
-        
-        // 如果分析还在运行，继续检查
-        if (currentStatus.isRunning) {
-          setTimeout(checkStatusLoop, 2000)
-        } else {
-          // 分析完成，更新历史记录
-          fetchAnalysisHistory()
+        try {
+          console.log('检查分析状态...')
+          const currentStatus = await apiGet('api/analyze/status')
+          console.log('分析状态:', currentStatus)
+          setStatus(currentStatus)
+          
+          // 如果分析还在运行，继续检查
+          if (currentStatus.isRunning) {
+            setTimeout(checkStatusLoop, 2000)
+          } else {
+            // 分析完成，更新历史记录
+            console.log('分析完成，更新历史记录...')
+            fetchAnalysisHistory()
+            setRefreshing(false)
+          }
+        } catch (e) {
+          console.error('获取分析状态失败:', e)
+          setErrorMsg('获取分析状态失败: ' + (e?.message || ''))
           setRefreshing(false)
         }
       }
       
       // 启动状态检查循环
+      console.log('启动状态检查循环...')
       setTimeout(checkStatusLoop, 2000)
     } catch (e) {
       console.error('启动分析失败:', e)
-      setErrorMsg(e?.message || '启动分析失败，请查看控制台或检查接口配置')
+      setErrorMsg('启动分析失败: ' + (e?.message || '') + '\n请检查API路径是否正确或服务是否正常运行')
       setRefreshing(false)
     }
   }
@@ -121,6 +139,7 @@ function AnalyzeContent() {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
+        console.log('页面变为可见，刷新状态...')
         const init = async () => {
           await fetchStatus()
           await fetchAnalysisHistory()
@@ -131,6 +150,7 @@ function AnalyzeContent() {
     
     // 初始加载
     const init = async () => {
+      console.log('初始化分析页面...')
       await fetchStatus()
       await fetchAnalysisHistory()
     }
@@ -142,34 +162,40 @@ function AnalyzeContent() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [])
+  }, [fetchStatus, fetchAnalysisHistory])
 
   // 当检测到正在分析时，恢复状态轮询
   useEffect(() => {
     if (status.isRunning && !refreshing) {
+      console.log('检测到分析正在运行，启动状态轮询...')
       // 恢复轮询
       const checkStatusLoop = async () => {
         try {
+          console.log('轮询分析状态...')
           const currentStatus = await apiGet('api/analyze/status')
+          console.log('轮询到的分析状态:', currentStatus)
           setStatus(currentStatus)
           
           // 如果分析还在运行，继续检查
           if (currentStatus.isRunning) {
+            console.log('分析仍在运行，继续轮询...')
             setTimeout(checkStatusLoop, 2000)
           } else {
             // 分析完成，更新历史记录
+            console.log('分析完成，更新历史记录...')
             fetchAnalysisHistory()
           }
         } catch (e) {
           console.error('轮询状态失败:', e)
+          setErrorMsg('轮询状态失败: ' + (e?.message || ''))
         }
       }
       
       // 启动状态检查循环
-      const timer = setTimeout(checkStatusLoop, 2000)
+      const timer = setTimeout(checkStatusLoop, 1000) // 缩短轮询间隔，更快响应
       return () => clearTimeout(timer)
     }
-  }, [status.isRunning, refreshing])
+  }, [status.isRunning, refreshing, fetchAnalysisHistory])
 
   // 自动启动分析（从监控页面跳转过来时）
   useEffect(() => {

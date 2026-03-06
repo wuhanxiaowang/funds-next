@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { apiGet, apiPost } from '../../lib/api'
 import { cronService } from '../../lib/cron-service'
 import { CardSkeleton } from '../../components/Loading'
+import SignalDetail from '../../components/SignalDetail'
 
 export default function MonitorPage() {
   const router = useRouter()
@@ -22,6 +23,8 @@ export default function MonitorPage() {
   const [historyPage, setHistoryPage] = useState(1)
   const [nextTimes, setNextTimes] = useState({ nextNewsTime: null, nextAnalysisTime: null })
   const [loading, setLoading] = useState(true)
+  const [validSignals, setValidSignals] = useState([])
+  const [selectedSignal, setSelectedSignal] = useState(null)
   const HISTORY_PAGE_SIZE = 10
 
   const refreshStats = async () => {
@@ -67,6 +70,16 @@ export default function MonitorPage() {
       setAnalyzing(data.isRunning === true)
     } catch (_) {
       setAnalyzing(false)
+    }
+  }
+
+  const refreshValidSignals = async () => {
+    try {
+      const data = await apiGet('api/signals', { filter: 'valid', limit: 5 })
+      setValidSignals(Array.isArray(data) ? data : [])
+    } catch (e) {
+      console.error('获取有效信号失败:', e)
+      setValidSignals([])
     }
   }
 
@@ -167,6 +180,7 @@ export default function MonitorPage() {
         refreshNewsSchedule()
         refreshNews()
         refreshAnalysisStatus()
+        refreshValidSignals()
       }
     }
     
@@ -176,6 +190,7 @@ export default function MonitorPage() {
     refreshNewsSchedule()
     refreshNews()
     refreshAnalysisStatus()
+    refreshValidSignals()
     
     // 监听页面可见性变化
     document.addEventListener('visibilitychange', handleVisibilityChange)
@@ -311,26 +326,26 @@ export default function MonitorPage() {
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '18px', fontWeight: 600 }}>系统监控</span>
-            <span className={`tag ${scheduleEnabled ? 'tag-success' : 'tag-info'}`} style={{ padding: '4px 10px', borderRadius: '6px' }}>
+            <span className={`tag ${scheduleEnabled ? 'tag-success' : 'tag-info'}`} style={{ padding: '4px 10px', borderRadius: '6px', background: scheduleEnabled ? '#00ff88' : '#00c3ff', color: '#000', fontWeight: '600' }}>
               {scheduleEnabled ? '定时分析中' : '系统就绪'}
             </span>
             {newsScheduleEnabled && (
-              <span className="tag tag-success" style={{ padding: '4px 10px', borderRadius: '6px' }}>
+              <span className="tag tag-success" style={{ padding: '4px 10px', borderRadius: '6px', background: '#ffd93d', color: '#000', fontWeight: '600' }}>
                 定时拉取新闻中
               </span>
             )}
           </div>
           <div className="actions-row" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-            <button className="btn btn-primary" onClick={fetchLatestNews} disabled={fetchingNews}>
+            <button className="btn btn-primary" onClick={fetchLatestNews} disabled={fetchingNews} style={{ background: '#00ff88', color: '#000', fontWeight: '600' }}>
               {fetchingNews ? '抓取中...' : '立即拉取新闻'}
             </button>
-            <button className="btn btn-primary" onClick={runAnalysis} disabled={analyzing}>
+            <button className="btn btn-primary" onClick={runAnalysis} disabled={analyzing} style={{ background: '#00c3ff', color: '#000', fontWeight: '600' }}>
               {analyzing ? '分析中...' : '立即分析'}
             </button>
-            <button className="btn btn-ghost" onClick={() => router.push('/signals?filter=valid')}>
+            <button className="btn btn-ghost" onClick={() => router.push('/signals?filter=valid')} style={{ background: '#ff6b6b', color: '#fff', fontWeight: '600' }}>
               查看信号详情
             </button>
-            <button className="btn btn-ghost" onClick={() => { refreshStats(); refreshSchedule(); refreshNewsSchedule(); refreshNews(); }}>
+            <button className="btn btn-ghost" onClick={() => { refreshStats(); refreshSchedule(); refreshNewsSchedule(); refreshNews(); }} style={{ background: '#ffd93d', color: '#000', fontWeight: '600' }}>
               刷新数据
             </button>
           </div>
@@ -407,6 +422,100 @@ export default function MonitorPage() {
           </div>
         </div>
       </div>
+
+      {/* 有效信号详情列表 */}
+      {validSignals.length > 0 && (
+        <div className="glass" style={{ padding: '20px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '16px', margin: 0 }}>最近有效信号</h3>
+            <button 
+              className="btn btn-ghost" 
+              onClick={() => router.push('/signals?filter=valid')}
+              style={{ padding: '6px 12px', fontSize: '13px' }}
+            >
+              查看全部
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {validSignals.map((signal) => {
+              const dirStyle = { bg: 'transparent', color: 'var(--text)', border: '1px solid rgba(255, 255, 255, 0.1)' }
+              
+              return (
+                <div 
+                  key={signal.id}
+                  onClick={() => setSelectedSignal(signal)}
+                  style={{
+                    padding: '14px 16px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    ':hover': {
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      border: '1px solid rgba(0, 149, 255, 0.3)'
+                    }
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '4px', color: '#fff' }}>
+                        {signal.event || '未知事件'}
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                        {signal.asset_class || '-'} · {signal.period || '-'}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '12px' }}>
+                      <span style={{
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        ...dirStyle
+                      }}>
+                        {signal.direction}
+                      </span>
+                      <span style={{
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        background: 'rgba(255, 169, 64, 0.15)',
+                        color: '#ffa940',
+                        border: '1px solid rgba(255, 169, 64, 0.3)'
+                      }}>
+                        强度 {signal.strength}
+                      </span>
+                    </div>
+                  </div>
+                  {signal.news && (
+                    <div style={{
+                      fontSize: '12px',
+                      color: 'var(--text-muted)',
+                      marginTop: '8px',
+                      padding: '8px 10px',
+                      background: 'rgba(0, 0, 0, 0.2)',
+                      borderRadius: '6px',
+                      borderLeft: '3px solid rgba(0, 149, 255, 0.5)'
+                    }}>
+                      📰 {signal.news.title || '无标题'}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* 信号详情模态框 */}
+      {selectedSignal && (
+        <SignalDetail 
+          signal={selectedSignal} 
+          onClose={() => setSelectedSignal(null)} 
+        />
+      )}
 
       {/* 新闻模块 */}
       <div className="glass" style={{ padding: '20px', marginTop: '20px' }}>
