@@ -1,9 +1,12 @@
 {
-  "/api/analyze/stats/route": "app/api/analyze/stats/route.js",
+  "/api/alerts/route": "app/api/alerts/route.js",
+  "/api/signals/route": "app/api/signals/route.js",
   "/api/analyze/schedule/status/route": "app/api/analyze/schedule/status/route.js",
+  "/api/analyze/stats/route": "app/api/analyze/stats/route.js",
   "/api/news/schedule/status/route": "app/api/news/schedule/status/route.js",
   "/api/news/route": "app/api/news/route.js",
-  "/api/signals/route": "app/api/signals/route.js",
   "/api/analyze/status/route": "app/api/analyze/status/route.js",
-  "/monitor/page": "app/monitor/page.js"
+  "/monitor/page": "app/monitor/page.js",
+  "/analyze/page": "app/analyze/page.js",
+  "/alerts/page": "app/alerts/page.js"
 }

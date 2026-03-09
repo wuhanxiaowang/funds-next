@@ -1,35 +1,5 @@
 {
   "pages": {
-    "/api/analyze/stats/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/analyze/stats/route.js"
-    ],
-    "/api/analyze/status/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/analyze/status/route.js"
-    ],
-    "/api/news/schedule/status/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/news/schedule/status/route.js"
-    ],
-    "/api/signals/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/signals/route.js"
-    ],
-    "/api/analyze/schedule/status/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/analyze/schedule/status/route.js"
-    ],
-    "/api/news/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/news/route.js"
-    ],
     "/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -41,20 +11,50 @@
       "static/chunks/main-app.js",
       "static/chunks/app/monitor/page.js"
     ],
-    "/signals/page": [
+    "/api/analyze/stats/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/signals/page.js"
+      "static/chunks/app/api/analyze/stats/route.js"
     ],
-    "/asset-classes/page": [
+    "/api/analyze/status/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/asset-classes/page.js"
+      "static/chunks/app/api/analyze/status/route.js"
+    ],
+    "/api/analyze/schedule/status/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/analyze/schedule/status/route.js"
+    ],
+    "/api/news/schedule/status/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/news/schedule/status/route.js"
+    ],
+    "/api/news/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/news/route.js"
+    ],
+    "/api/signals/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/signals/route.js"
     ],
     "/analyze/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/analyze/page.js"
+    ],
+    "/alerts/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/alerts/page.js"
+    ],
+    "/api/alerts/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/alerts/route.js"
     ]
   }
 }
