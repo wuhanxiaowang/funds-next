@@ -771,7 +771,10 @@ export default function MonitorPage() {
             <span className="stat-title">上次更新</span>
             <span style={{ fontSize: '14px' }}>{lastUpdated || '-'}</span>
           </div>
-
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span className="stat-title">版本号</span>
+            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>v{process.env.NEXT_PUBLIC_BUILD_VERSION || '1.0.0'}</span>
+          </div>
         </div>
       </div>
 

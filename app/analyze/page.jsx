@@ -182,9 +182,13 @@ function AnalyzeContent() {
   useEffect(() => {
     if (autoStart && !autoStarted && !status.isRunning) {
       setAutoStarted(true)
-      runAnalysis()
+      // 延迟执行，避免在渲染期间调用
+      setTimeout(() => {
+        runAnalysis()
+      }, 100)
     }
-  }, [autoStart, autoStarted, status.isRunning, runAnalysis])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart, autoStarted, status.isRunning])
 
   return (
     <div>
