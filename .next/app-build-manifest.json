@@ -1,9 +1,34 @@
 {
   "pages": {
+    "/api/analyze/stats/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/analyze/stats/route.js"
+    ],
     "/api/analyze/status/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/analyze/status/route.js"
+    ],
+    "/api/news/schedule/status/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/news/schedule/status/route.js"
+    ],
+    "/api/signals/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/signals/route.js"
+    ],
+    "/api/analyze/schedule/status/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/analyze/schedule/status/route.js"
+    ],
+    "/api/news/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/news/route.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -16,30 +41,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/monitor/page.js"
     ],
-    "/api/analyze/stats/route": [
+    "/signals/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/analyze/stats/route.js"
+      "static/chunks/app/signals/page.js"
     ],
-    "/api/analyze/schedule/status/route": [
+    "/asset-classes/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/analyze/schedule/status/route.js"
-    ],
-    "/api/news/schedule/status/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/news/schedule/status/route.js"
-    ],
-    "/api/signals/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/signals/route.js"
-    ],
-    "/api/news/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/news/route.js"
+      "static/chunks/app/asset-classes/page.js"
     ],
     "/analyze/page": [
       "static/chunks/webpack.js",

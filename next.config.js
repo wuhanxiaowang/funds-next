@@ -5,7 +5,7 @@ const path = require('path')
 
 const basePath = (process.env.NEXT_PUBLIC_BASE_PATH || '').replace(/\/$/, '')
 
-// 生成版本号：优先使用Git提交哈希，如果没有Git则使用package.json版本+构建时间
+// 生成版本号：优先使用Git提交哈希，如果没有Git则使用package.json版本+完整时间戳
 function generateVersion() {
   try {
     // 尝试获取Git提交哈希（前8位）
@@ -22,11 +22,11 @@ function generateVersion() {
     // Git不可用，使用备用方案
   }
   
-  // 备用方案：读取package.json版本 + 构建时间
+  // 备用方案：读取package.json版本 + 完整时间戳（确保每次构建都有唯一版本号）
   try {
     const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf-8'))
     const version = packageJson.version || '1.0.0'
-    const buildTime = new Date().toISOString().slice(0, 10).replace(/-/g, '') // 年月日
+    const buildTime = new Date().toISOString().slice(0, 19).replace(/[-:T]/g, '') // 年月日时分秒
     return `${version}-${buildTime}`
   } catch (e) {
     // 如果都失败，使用固定版本

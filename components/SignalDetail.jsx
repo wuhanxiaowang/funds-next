@@ -1,7 +1,12 @@
 'use client'
+import { useState } from 'react'
 
 export default function SignalDetail({ signal, onClose }) {
   if (!signal) return null
+
+  const [result, setResult] = useState('')
+  const [remark, setRemark] = useState('')
+  const [saving, setSaving] = useState(false)
 
   const dirType = (d) => {
     if (d === '涨') return { bg: 'rgba(0, 255, 136, 0.2)', color: '#00ff88', border: '1px solid rgba(0, 255, 136, 0.3)' }
@@ -17,6 +22,23 @@ export default function SignalDetail({ signal, onClose }) {
   }
 
   const dirStyle = dirType(signal.direction)
+
+  const saveResult = async () => {
+    if (!result) return
+    setSaving(true)
+    try {
+      // 这里可以调用API保存结果
+      console.log('保存信号结果:', { signalId: signal.id, result, remark })
+      // 模拟保存成功
+      setTimeout(() => {
+        setSaving(false)
+        alert('标记成功')
+      }, 1000)
+    } catch (e) {
+      setSaving(false)
+      alert('保存失败: ' + (e.message || ''))
+    }
+  }
 
   return (
     <div style={{
@@ -186,6 +208,75 @@ export default function SignalDetail({ signal, onClose }) {
             </div>
           </div>
         )}
+
+        {/* 手动标记信号结果 */}
+        <div style={{
+          marginTop: '24px',
+          paddingTop: '20px',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+        }}>
+          <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px', color: '#fff' }}>标记信号结果</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>结果</div>
+              <select
+                value={result}
+                onChange={(e) => setResult(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  color: '#fff',
+                  fontSize: '14px'
+                }}
+              >
+                <option value="">请选择结果</option>
+                <option value="success">成功</option>
+                <option value="partial">部分成功</option>
+                <option value="failed">失败</option>
+                <option value="pending">待定</option>
+              </select>
+            </div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>备注</div>
+              <textarea
+                value={remark}
+                onChange={(e) => setRemark(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  color: '#fff',
+                  fontSize: '14px',
+                  resize: 'vertical',
+                  minHeight: '80px'
+                }}
+                placeholder="请输入备注信息..."
+              />
+            </div>
+          </div>
+          <button
+            onClick={saveResult}
+            disabled={!result || saving}
+            style={{
+              padding: '10px 24px',
+              borderRadius: '6px',
+              border: 'none',
+              background: '#00c3ff',
+              color: '#000',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: !result || saving ? 'not-allowed' : 'pointer',
+              opacity: !result || saving ? 0.6 : 1
+            }}
+          >
+            {saving ? '保存中...' : '保存结果'}
+          </button>
+        </div>
 
         {/* 时间信息 */}
         <div style={{
