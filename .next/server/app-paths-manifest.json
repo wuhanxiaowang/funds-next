@@ -8,9 +8,10 @@
   "/api/news/schedule/status/route": "app/api/news/schedule/status/route.js",
   "/api/analyze/schedule/status/route": "app/api/analyze/schedule/status/route.js",
   "/api/analyze/status/route": "app/api/analyze/status/route.js",
+  "/api/analyze/run/route": "app/api/analyze/run/route.js",
   "/monitor/page": "app/monitor/page.js",
   "/analyze/page": "app/analyze/page.js",
-  "/signals/page": "app/signals/page.js",
+  "/rules/page": "app/rules/page.js",
   "/alerts/page": "app/alerts/page.js",
-  "/rules/page": "app/rules/page.js"
+  "/signals/page": "app/signals/page.js"
 }
