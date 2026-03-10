@@ -8,7 +8,7 @@ import { CardSkeleton } from '../../components/Loading'
 import SignalDetail from '../../components/SignalDetail'
 import NewsDetail from '../../components/NewsDetail'
 import {
-  LineChart, Line, BarChart, Bar, Cell,
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts'
 
@@ -717,27 +717,43 @@ export default function MonitorPage() {
           </div>
         </div>
 
-        {/* 行业分布柱状图 */}
+        {/* 行业分布饼图 */}
         <div className="glass" style={{ padding: '20px' }}>
           <h3 style={{ marginBottom: '16px', fontSize: '16px' }}>行业分布</h3>
           <div style={{ height: '300px' }}>
             {industryDistribution.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={industryDistribution} layout="vertical" margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-                  <XAxis type="number" tick={{ fill: 'var(--text-muted)', fontSize: 12 }} />
-                  <YAxis type="category" dataKey="name" width={140} tick={{ fill: 'var(--text)', fontSize: 12 }} />
-                  <Tooltip
-                    formatter={(value) => [`${value} 条`, '数量']}
-                    contentStyle={{ background: 'rgba(0,0,0,0.85)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', borderRadius: '6px', padding: '8px 12px', fontSize: '13px' }}
-                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                  />
-                  <Bar dataKey="value" name="条数" radius={[0, 4, 4, 0]} maxBarSize={36}>
+                <PieChart>
+                  <Pie
+                    data={industryDistribution}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                    nameKey="name"
+                    label={false}
+                  >
                     {industryDistribution.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
-                  </Bar>
-                </BarChart>
+                  </Pie>
+                  <Tooltip
+                    formatter={(value) => [`${value} 条`, '数量']}
+                    contentStyle={{ background: 'rgba(0,0,0,0.85)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', borderRadius: '6px', padding: '8px 12px', fontSize: '13px' }}
+                  />
+                  <Legend 
+                    layout="vertical" 
+                    verticalAlign="middle" 
+                    align="right" 
+                    wrapperStyle={{ 
+                      fontSize: '12px', 
+                      color: 'var(--text-muted)',
+                      paddingLeft: '10px'
+                    }}
+                  />
+                </PieChart>
               </ResponsiveContainer>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)', fontSize: '14px' }}>

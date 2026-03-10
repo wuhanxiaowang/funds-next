@@ -5,13 +5,8 @@
   "/api/news/schedule/status/route": "app/api/news/schedule/status/route.js",
   "/api/analyze/status/route": "app/api/analyze/status/route.js",
   "/api/analyze/schedule/status/route": "app/api/analyze/schedule/status/route.js",
-  "/api/auth/login/route": "app/api/auth/login/route.js",
-  "/api/auth/me/route": "app/api/auth/me/route.js",
   "/api/settings/permissions/route": "app/api/settings/permissions/route.js",
-  "/api/settings/users/route": "app/api/settings/users/route.js",
   "/login/page": "app/login/page.js",
   "/monitor/page": "app/monitor/page.js",
-  "/analyze/page": "app/analyze/page.js",
-  "/signals/page": "app/signals/page.js",
-  "/settings/page": "app/settings/page.js"
+  "/signals/page": "app/signals/page.js"
 }
