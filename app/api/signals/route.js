@@ -9,8 +9,11 @@ export async function GET(req) {
   const skip = parseInt(searchParams.get('skip') || '0', 10)
   const limit = Math.min(parseInt(searchParams.get('limit') || '100', 10), 500)
   const includeNews = searchParams.get('include_news') === 'true'
+  const filter = searchParams.get('filter')
   
-  let query = supabase.from('signals').select('*').order('created_at', { ascending: false }).range(skip, skip + limit - 1)
+  let query = supabase.from('signals').select('*').order('created_at', { ascending: false })
+  if (filter === 'valid') query = query.eq('is_valid', true)
+  query = query.range(skip, skip + limit - 1)
   
   const { data: signals, error } = await query
   if (error) return NextResponse.json({ detail: error.message }, { status: 500 })

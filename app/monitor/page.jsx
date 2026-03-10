@@ -1,13 +1,14 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { apiGet, apiPost } from '../../lib/api'
+import { useAuth } from '../../components/AuthContext'
+import { apiGet, apiPost, apiPut } from '../../lib/api'
 import { cronService } from '../../lib/cron-service'
 import { CardSkeleton } from '../../components/Loading'
 import SignalDetail from '../../components/SignalDetail'
 import NewsDetail from '../../components/NewsDetail'
 import {
-  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  LineChart, Line, BarChart, Bar, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts'
 
@@ -37,6 +38,7 @@ function AnimatedValue({ value }) {
 
 export default function MonitorPage() {
   const router = useRouter()
+  const { user, logout } = useAuth()
   const [stats, setStats] = useState({ newsCount: 0, signalCount: 0, validSignalCount: 0, alertCount: 0 })
   const [analyzing, setAnalyzing] = useState(false)
   const [scheduleEnabled, setScheduleEnabled] = useState(false)
@@ -51,6 +53,10 @@ export default function MonitorPage() {
   const [newsTab, setNewsTab] = useState('today') // 'today' 或 'history'
   const [historyPage, setHistoryPage] = useState(1)
   const [nextTimes, setNextTimes] = useState({ nextNewsTime: null, nextAnalysisTime: null })
+  const [newsScheduleIntervalMinutes, setNewsScheduleIntervalMinutes] = useState(120)
+  const [newsScheduleIntervalOptions, setNewsScheduleIntervalOptions] = useState([])
+  const [analysisScheduleIntervalMinutes, setAnalysisScheduleIntervalMinutes] = useState(120)
+  const [analysisScheduleIntervalOptions, setAnalysisScheduleIntervalOptions] = useState([])
   const [loading, setLoading] = useState(true)
   const [validSignals, setValidSignals] = useState([])
   const [selectedSignal, setSelectedSignal] = useState(null)
@@ -68,10 +74,10 @@ export default function MonitorPage() {
   const [backtestExpanded, setBacktestExpanded] = useState(false) // 控制策略回测与复盘的展开/折叠状态
   const HISTORY_PAGE_SIZE = 10
 
-  const refreshStats = async () => {
+  const refreshStats = async (signal) => {
     setLoading(true)
     try {
-      const data = await apiGet('api/analyze/stats')
+      const data = await apiGet('api/analyze/stats', {}, signal)
       setStats({
         newsCount: data.newsCount ?? 0,
         signalCount: data.signalCount ?? 0,
@@ -81,56 +87,82 @@ export default function MonitorPage() {
       setLastUpdated(new Date().toLocaleString())
       setError('')
     } catch (e) {
-      setError('获取统计失败: ' + (e.message || ''))
+      if (e.name !== 'AbortError') {
+        setError('获取统计失败: ' + (e.message || ''))
+      }
     } finally {
       setLoading(false)
     }
   }
 
-  const refreshSchedule = async () => {
+  const refreshSchedule = async (signal) => {
     try {
-      const data = await apiGet('api/analyze/schedule/status')
+      const data = await apiGet('api/analyze/schedule/status', {}, signal)
       setScheduleEnabled(data.enabled === true)
-    } catch (_) {
-      setScheduleEnabled(false)
+      if (typeof data.intervalMinutes === 'number') setAnalysisScheduleIntervalMinutes(data.intervalMinutes)
+      if (Array.isArray(data.intervalOptions)) setAnalysisScheduleIntervalOptions(data.intervalOptions)
+      setNextTimes(prev => ({
+        ...prev,
+        nextAnalysisTime: data.nextAnalysisTime ? new Date(data.nextAnalysisTime) : null
+      }))
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        setScheduleEnabled(false)
+      }
     }
   }
 
-  const refreshNewsSchedule = async () => {
+  const refreshNewsSchedule = async (signal) => {
     try {
-      const data = await apiGet('api/news/schedule/status')
+      const data = await apiGet('api/news/schedule/status', {}, signal)
       setNewsScheduleEnabled(data.enabled === true)
-    } catch (_) {
-      setNewsScheduleEnabled(false)
+      if (typeof data.intervalMinutes === 'number') setNewsScheduleIntervalMinutes(data.intervalMinutes)
+      if (Array.isArray(data.intervalOptions)) setNewsScheduleIntervalOptions(data.intervalOptions)
+      setNextTimes(prev => ({
+        ...prev,
+        nextNewsTime: data.nextNewsTime ? new Date(data.nextNewsTime) : null
+      }))
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        setNewsScheduleEnabled(false)
+      }
     }
   }
 
-  const refreshAnalysisStatus = async () => {
+  const refreshAnalysisStatus = async (signal) => {
     try {
-      const data = await apiGet('api/analyze/status')
+      const data = await apiGet('api/analyze/status', {}, signal)
       setAnalyzing(data.isRunning === true)
-    } catch (_) {
-      setAnalyzing(false)
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        setAnalyzing(false)
+      }
     }
   }
 
-  const refreshValidSignals = async () => {
+  const refreshValidSignals = async (signal) => {
     try {
-      const data = await apiGet('api/signals', { filter: 'valid', limit: 5 })
+      const data = await apiGet('api/signals', { filter: 'valid', limit: 100 }, signal)
       const signals = Array.isArray(data) ? data : []
-      setValidSignals(signals)
-      
-      // 生成行业分布数据
-      const industryData = {};
-      signals.forEach(signal => {
-        const industry = signal.asset_class || '其他';
-        industryData[industry] = (industryData[industry] || 0) + 1;
-      });
-      setIndustryDistribution(Object.entries(industryData).map(([name, value]) => ({ name, value })));
+      setValidSignals(signals.slice(0, 5))
+      const industryData = {}
+      signals.forEach(s => {
+        const industry = s.asset_class || '其他'
+        industryData[industry] = (industryData[industry] || 0) + 1
+      })
+      const entries = Object.entries(industryData).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
+      const maxSlices = 5
+      const top = entries.slice(0, maxSlices)
+      const rest = entries.slice(maxSlices)
+      if (rest.length > 0) {
+        const otherSum = rest.reduce((sum, e) => sum + e.value, 0)
+        top.push({ name: '其他', value: otherSum })
+      }
+      setIndustryDistribution(top)
     } catch (e) {
       console.error('获取有效信号失败:', e)
       setValidSignals([])
-      setIndustryDistribution([])
+      // 请求失败时不清空饼图，保留上次数据，避免“有时出现有时消失”
     }
   }
 
@@ -230,9 +262,9 @@ export default function MonitorPage() {
     return text
   }
 
-  const refreshNews = async () => {
+  const refreshNews = async (signal) => {
     try {
-      const data = await apiGet('api/news', { limit: 15 })
+      const data = await apiGet('api/news', { limit: 15 }, signal)
       // 处理返回格式（可能是数组或对象）
       const newsList = data.news || (Array.isArray(data) ? data : [])
       // 去除HTML标签
@@ -245,8 +277,8 @@ export default function MonitorPage() {
       
       // 分离今日新闻和历史新闻
       const today = new Date().toISOString().slice(0, 10)
-      const todayNews = cleanedNews.filter(n => n.created_at && n.created_at.startsWith(today))
-      const historyNews = cleanedNews.filter(n => !n.created_at || !n.created_at.startsWith(today))
+      const todayNews = allNews.filter(n => n.created_at && n.created_at.startsWith(today))
+      const historyNews = allNews.filter(n => n.created_at && !n.created_at.startsWith(today))
       
       // 根据当前标签显示对应的新闻
       if (newsTab === 'today') {
@@ -258,7 +290,9 @@ export default function MonitorPage() {
         setNews(historyNews.slice(startIndex, endIndex))
       }
     } catch (e) {
-      console.error('获取新闻失败:', e)
+      if (e.name !== 'AbortError') {
+        console.error('获取新闻失败:', e)
+      }
     }
   }
 
@@ -267,7 +301,7 @@ export default function MonitorPage() {
     if (allNews.length > 0) {
       const today = new Date().toISOString().slice(0, 10)
       const todayNews = allNews.filter(n => n.created_at && n.created_at.startsWith(today))
-      const historyNews = allNews.filter(n => !n.created_at || !n.created_at.startsWith(today))
+      const historyNews = allNews.filter(n => n.created_at && !n.created_at.startsWith(today))
       
       if (newsTab === 'today') {
         setNews(todayNews)
@@ -322,19 +356,22 @@ export default function MonitorPage() {
     
     // 监听页面可见性变化
     document.addEventListener('visibilitychange', handleVisibilityChange)
-    
-    // 每3秒刷新一次分析状态
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
+  // 仅在「分析中」时轮询分析状态，避免空闲时一直请求
+  useEffect(() => {
+    if (!analyzing) return
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         refreshAnalysisStatus()
       }
-    }, 3000)
-    
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-      clearInterval(interval)
-    }
-  }, [])
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [analyzing])
 
   // 时间范围变化时重新生成趋势数据
   useEffect(() => {
@@ -350,16 +387,14 @@ export default function MonitorPage() {
 
   const startSchedule = async () => {
     try {
-      await apiPost('api/analyze/schedule/start')
+      await apiPost('api/analyze/schedule/start', { intervalMinutes: analysisScheduleIntervalMinutes })
+      const data = await apiGet('api/analyze/schedule/status')
       setScheduleEnabled(true)
-      // 重新计算下次执行时间（2小时后）
-      const now = new Date()
-      const nextAnalysisTime = new Date(now)
-      nextAnalysisTime.setHours(nextAnalysisTime.getHours() + 2)
-      const nextNewsTime = nextTimes.nextNewsTime
-      setNextTimes({ nextNewsTime, nextAnalysisTime })
-      const timeStr = `${String(nextAnalysisTime.getHours()).padStart(2, '0')}:${String(nextAnalysisTime.getMinutes()).padStart(2, '0')}:${String(nextAnalysisTime.getSeconds()).padStart(2, '0')}`
-      showToast('已启动定时分析，下次分析时间: ' + timeStr, 'success')
+      setNextTimes(prev => ({ ...prev, nextAnalysisTime: data.nextAnalysisTime ? new Date(data.nextAnalysisTime) : null }))
+      const nextStr = data.nextAnalysisTime
+        ? new Date(data.nextAnalysisTime).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        : ''
+      showToast(nextStr ? `已启动定时分析，下次执行: ${nextStr}` : '已启动定时分析（配置已持久化）', 'success')
     } catch (e) {
       setError('启动失败: ' + (e.message || ''))
     }
@@ -368,24 +403,37 @@ export default function MonitorPage() {
   const stopSchedule = async () => {
     try {
       await apiPost('api/analyze/schedule/stop')
-      setScheduleEnabled(false)
+      await refreshSchedule()
+      showToast('已停止定时分析', 'success')
     } catch (e) {
       setError('停止失败: ' + (e.message || ''))
     }
   }
 
+  const updateAnalysisScheduleInterval = async (minutes) => {
+    const num = Number(minutes)
+    if (!Number.isFinite(num)) return
+    setAnalysisScheduleIntervalMinutes(num)
+    if (!scheduleEnabled) return
+    try {
+      await apiPut('api/analyze/schedule/config', { intervalMinutes: num })
+      await refreshSchedule()
+      showToast('已更新分析执行间隔', 'success')
+    } catch (e) {
+      showToast('更新间隔失败: ' + (e.message || ''), 'error')
+    }
+  }
+
   const startNewsSchedule = async () => {
     try {
-      await apiPost('api/news/schedule/start')
+      await apiPost('api/news/schedule/start', { intervalMinutes: newsScheduleIntervalMinutes })
+      const data = await apiGet('api/news/schedule/status')
       setNewsScheduleEnabled(true)
-      // 重新计算下次执行时间（2小时后）
-      const now = new Date()
-      const nextNewsTime = new Date(now)
-      nextNewsTime.setHours(nextNewsTime.getHours() + 2)
-      const nextAnalysisTime = nextTimes.nextAnalysisTime
-      setNextTimes({ nextNewsTime, nextAnalysisTime })
-      const timeStr = `${String(nextNewsTime.getHours()).padStart(2, '0')}:${String(nextNewsTime.getMinutes()).padStart(2, '0')}:${String(nextNewsTime.getSeconds()).padStart(2, '0')}`
-      showToast('已启动定时拉取新闻，下次拉取时间: ' + timeStr, 'success')
+      setNextTimes(prev => ({ ...prev, nextNewsTime: data.nextNewsTime ? new Date(data.nextNewsTime) : null }))
+      const nextStr = data.nextNewsTime
+        ? new Date(data.nextNewsTime).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        : ''
+      showToast(nextStr ? `已启动定时拉取，下次执行: ${nextStr}` : '已启动定时拉取新闻（配置已持久化）', 'success')
     } catch (e) {
       showToast('启动失败: ' + (e.message || ''), 'error')
     }
@@ -394,10 +442,24 @@ export default function MonitorPage() {
   const stopNewsSchedule = async () => {
     try {
       await apiPost('api/news/schedule/stop')
-      setNewsScheduleEnabled(false)
+      await refreshNewsSchedule()
       showToast('已停止定时拉取新闻', 'success')
     } catch (e) {
       showToast('停止失败: ' + (e.message || ''), 'error')
+    }
+  }
+
+  const updateNewsScheduleInterval = async (minutes) => {
+    const num = Number(minutes)
+    if (!Number.isFinite(num)) return
+    setNewsScheduleIntervalMinutes(num)
+    if (!newsScheduleEnabled) return
+    try {
+      await apiPut('api/news/schedule/config', { intervalMinutes: num })
+      await refreshNewsSchedule()
+      showToast('已更新执行间隔', 'success')
+    } catch (e) {
+      showToast('更新间隔失败: ' + (e.message || ''), 'error')
     }
   }
 
@@ -422,7 +484,7 @@ export default function MonitorPage() {
       // 根据当前标签更新显示
       const today = new Date().toISOString().slice(0, 10)
       const todayNews = cleanedNews.filter(n => n.created_at && n.created_at.startsWith(today))
-      const historyNews = cleanedNews.filter(n => !n.created_at || !n.created_at.startsWith(today))
+      const historyNews = cleanedNews.filter(n => n.created_at && !n.created_at.startsWith(today))
       
       if (newsTab === 'today') {
         setNews(todayNews)
@@ -471,6 +533,27 @@ export default function MonitorPage() {
               </span>
             )}
             <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>数据最后更新：{lastUpdated || '-'}</span>
+            {user && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginLeft: 'auto' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#00c3ff' }}>{user.username}</span>
+                <button
+                  type="button"
+                  onClick={() => { logout(); router.push('/login') }}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 100, 100, 0.6)',
+                    background: 'rgba(255, 68, 68, 0.2)',
+                    color: '#ff6b6b',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  退出
+                </button>
+              </div>
+            )}
           </div>
           <div className="actions-row" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button className="btn btn-primary" onClick={fetchLatestNews} disabled={fetchingNews} style={{ background: '#00ff88', color: '#000', fontWeight: '600' }}>
@@ -492,7 +575,7 @@ export default function MonitorPage() {
             <button className="btn btn-ghost" onClick={() => router.push('/signals?filter=valid')} style={{ background: '#ff6b6b', color: '#fff', fontWeight: '600' }}>
               查看信号详情
             </button>
-            <button className="btn btn-ghost" onClick={() => { refreshStats(); refreshSchedule(); refreshNewsSchedule(); refreshNews(); }} style={{ background: '#ffd93d', color: '#000', fontWeight: '600' }}>
+            <button className="btn btn-ghost" onClick={() => { refreshStats(); refreshSchedule(); refreshNewsSchedule(); refreshNews(); refreshValidSignals(); }} style={{ background: '#ffd93d', color: '#000', fontWeight: '600' }}>
               刷新数据
             </button>
           </div>
@@ -634,35 +717,33 @@ export default function MonitorPage() {
           </div>
         </div>
 
-        {/* 行业分布饼图 */}
+        {/* 行业分布柱状图 */}
         <div className="glass" style={{ padding: '20px' }}>
           <h3 style={{ marginBottom: '16px', fontSize: '16px' }}>行业分布</h3>
           <div style={{ height: '300px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={industryDistribution}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                >
-                  {industryDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    background: 'rgba(0,0,0,0.8)', 
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    color: '#fff'
-                  }} 
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            {industryDistribution.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={industryDistribution} layout="vertical" margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                  <XAxis type="number" tick={{ fill: 'var(--text-muted)', fontSize: 12 }} />
+                  <YAxis type="category" dataKey="name" width={140} tick={{ fill: 'var(--text)', fontSize: 12 }} />
+                  <Tooltip
+                    formatter={(value) => [`${value} 条`, '数量']}
+                    contentStyle={{ background: 'rgba(0,0,0,0.85)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', borderRadius: '6px', padding: '8px 12px', fontSize: '13px' }}
+                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                  />
+                  <Bar dataKey="value" name="条数" radius={[0, 4, 4, 0]} maxBarSize={36}>
+                    {industryDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)', fontSize: '14px' }}>
+                暂无有效信号，请先拉取新闻并分析
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1080,11 +1161,31 @@ export default function MonitorPage() {
                 </button>
               )}
             </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>执行间隔</span>
+              <select
+                className="schedule-interval-select"
+                value={newsScheduleIntervalMinutes}
+                onChange={(e) => {
+                  const v = Number(e.target.value)
+                  if (newsScheduleEnabled) updateNewsScheduleInterval(v)
+                  else setNewsScheduleIntervalMinutes(v)
+                }}
+                style={{ padding: '6px 10px', borderRadius: '6px', minWidth: '120px' }}
+              >
+                {(newsScheduleIntervalOptions.length ? newsScheduleIntervalOptions : [
+                  { value: 15, label: '15 分钟' }, { value: 30, label: '30 分钟' }, { value: 60, label: '1 小时' },
+                  { value: 120, label: '2 小时' }, { value: 240, label: '4 小时' }, { value: 1440, label: '24 小时' }
+                ]).map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
             {newsScheduleEnabled && nextTimes.nextNewsTime && (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>下次拉取时间</span>
+                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>下次执行时间</span>
                 <span style={{ fontSize: '14px', fontWeight: 500 }}>
-                  {String(nextTimes.nextNewsTime.getHours()).padStart(2, '0')}:{String(nextTimes.nextNewsTime.getMinutes()).padStart(2, '0')}:{String(nextTimes.nextNewsTime.getSeconds()).padStart(2, '0')}
+                  {nextTimes.nextNewsTime.toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                 </span>
               </div>
             )}
@@ -1112,11 +1213,31 @@ export default function MonitorPage() {
                 </button>
               )}
             </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>执行间隔</span>
+              <select
+                className="schedule-interval-select"
+                value={analysisScheduleIntervalMinutes}
+                onChange={(e) => {
+                  const v = Number(e.target.value)
+                  if (scheduleEnabled) updateAnalysisScheduleInterval(v)
+                  else setAnalysisScheduleIntervalMinutes(v)
+                }}
+                style={{ padding: '6px 10px', borderRadius: '6px', minWidth: '120px' }}
+              >
+                {(analysisScheduleIntervalOptions.length ? analysisScheduleIntervalOptions : [
+                  { value: 15, label: '15 分钟' }, { value: 30, label: '30 分钟' }, { value: 60, label: '1 小时' },
+                  { value: 120, label: '2 小时' }, { value: 240, label: '4 小时' }, { value: 1440, label: '24 小时' }
+                ]).map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
             {scheduleEnabled && nextTimes.nextAnalysisTime && (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>下次分析时间</span>
+                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>下次执行时间</span>
                 <span style={{ fontSize: '14px', fontWeight: 500 }}>
-                  {String(nextTimes.nextAnalysisTime.getHours()).padStart(2, '0')}:{String(nextTimes.nextAnalysisTime.getMinutes()).padStart(2, '0')}:{String(nextTimes.nextAnalysisTime.getSeconds()).padStart(2, '0')}
+                  {nextTimes.nextAnalysisTime.toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                 </span>
               </div>
             )}

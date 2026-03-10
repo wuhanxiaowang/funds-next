@@ -1,21 +1,20 @@
 import './globals.css'
-import Nav from '../components/Nav'
+import AppHeader from '../components/AppHeader'
 import { cronService } from '../lib/cron-service'
+import { AuthProvider } from '../components/AuthContext'
 
-// 启动定时任务服务
-cronService.start()
+cronService.start().catch(e => console.error('定时任务启动失败:', e?.message))
 
 export default function RootLayout({ children }) {
   return (
     <html lang="zh-CN">
       <body>
-        <div className="app-layout">
-          <header className="app-header">
-            <h1>投资信号系统</h1>
-            <Nav />
-          </header>
-          <main className="app-main"><div className="app-main-inner">{children}</div></main>
-        </div>
+        <AuthProvider>
+          <div className="app-layout">
+            <AppHeader />
+            <main className="app-main"><div className="app-main-inner">{children}</div></main>
+          </div>
+        </AuthProvider>
       </body>
     </html>
   )

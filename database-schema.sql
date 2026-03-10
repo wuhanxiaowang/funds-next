@@ -89,6 +89,73 @@ CREATE TABLE IF NOT EXISTS analysis_status (
   CONSTRAINT single_row CHECK (id = 1)
 );
 
+-- 8. 用户表
+CREATE TABLE IF NOT EXISTS users (
+  id BIGSERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  username VARCHAR(100) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role VARCHAR(50) NOT NULL DEFAULT 'user',
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  last_login_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+
+-- 角色说明：role 决定用户可见菜单与功能。admin=超管(全部权限)，其余角色见 lib/permissions.js 中的 PERMISSIONS。
+-- 设置其他用户菜单：1) 修改 lib/permissions.js 中各权限对应的角色列表；2) 在 users 表将该用户的 role 设为对应值，如 UPDATE users SET role = 'viewer' WHERE email = 'xxx';
+
+-- 添加默认管理员账号（密码见项目说明或自行重置）
+INSERT INTO users (email, username, password_hash, role)
+VALUES ('admin@qq.com', 'admin', '0000000056760663', 'admin')
+ON CONFLICT (email) DO UPDATE SET
+  username = EXCLUDED.username,
+  password_hash = EXCLUDED.password_hash,
+  role = EXCLUDED.role;
+
+-- 默认普通用户账号，供访客/体验使用（邮箱 user@example.com 密码 123456）
+INSERT INTO users (email, username, password_hash, role)
+VALUES ('user@example.com', '普通用户', '0000000056760663', 'user')
+ON CONFLICT (email) DO UPDATE SET
+  username = EXCLUDED.username,
+  password_hash = EXCLUDED.password_hash,
+  role = EXCLUDED.role;
+
+-- 9. 邮箱验证码表
+CREATE TABLE IF NOT EXISTS email_verification_codes (
+  id BIGSERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  code VARCHAR(10) NOT NULL,
+  purpose VARCHAR(20) NOT NULL DEFAULT 'register',
+  expires_at TIMESTAMPTZ NOT NULL,
+  used_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_verification_email ON email_verification_codes(email);
+CREATE INDEX IF NOT EXISTS idx_verification_code ON email_verification_codes(code);
+
+-- 10. 系统配置表（存菜单权限等）
+CREATE TABLE IF NOT EXISTS system_config (
+  key TEXT PRIMARY KEY,
+  value JSONB NOT NULL DEFAULT '{}',
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+INSERT INTO system_config (key, value)
+VALUES ('menu_permissions', '{
+  "monitor:view": ["user", "vip", "viewer"],
+  "analyze:run": ["user", "vip"],
+  "signals:view": ["user", "vip", "viewer"],
+  "signals:mark": ["user", "vip"],
+  "rules:manage": [],
+  "asset-classes:manage": [],
+  "alerts:view": ["user", "vip", "viewer"],
+  "audit:view": [],
+  "settings:manage": []
+}'::jsonb)
+ON CONFLICT (key) DO NOTHING;
+
 -- RLS 与策略
 ALTER TABLE news ENABLE ROW LEVEL SECURITY;
 ALTER TABLE signals ENABLE ROW LEVEL SECURITY;
@@ -96,10 +163,16 @@ ALTER TABLE alerts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE asset_classes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE analysis_status ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE email_verification_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE system_config ENABLE ROW LEVEL SECURITY;
 
+CREATE POLICY "Allow all for service" ON system_config FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for service" ON news FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for service" ON signals FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for service" ON alerts FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for service" ON rules FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for service" ON asset_classes FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for service" ON analysis_status FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all for service" ON users FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all for service" ON email_verification_codes FOR ALL USING (true) WITH CHECK (true);
